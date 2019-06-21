@@ -1,2 +1,9 @@
 # census-data-aggregator
-Combine Census data responsibly
+
+Combine U.S. census data responsibly
+
+### Installation
+
+```bash
+$ pipenv install census-data-aggregator
+```

@@ -2,7 +2,6 @@ import unittest
 import census_data_aggregator
 
 
-
 class CensusErrorAnalyzerTest(unittest.TestCase):
 
     def test_sum(self):

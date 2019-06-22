@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 import math
 
 
@@ -43,24 +45,24 @@ def approximate_median(range_list):
         n: The number of people, households or other universe figure in the range
     """
     # Sort the list
-    range_list.sort(key=lambda x: x['start'])
+    range_list.sort(key=lambda x: x['min'])
 
     # What is the total number of observations in the universe?
-    n = sum([d['total'] for d in range_list])
+    n = sum([d['n'] for d in range_list])
 
     # What is the midpoint of the universe?
     midpoint = n / 2.0
 
     # For each range calculate its min and max value along the universe's scale
-    running_total = 0
+    cumulative_n = 0
     for range_ in range_list:
-        range_['n_min'] = running_total
-        range_['n_max'] = running_total + range_['total']
-        running_total += range_['total']
+        range_['n_min'] = cumulative_n
+        cumulative_n += range_['n']
+        range_['n_max'] = cumulative_n
 
     # Now use those to determine which group contains the midpoint.
     try:
-        midpoint_range = next(d for d in range_ if midpoint >= d['n_min'] and mindpoint <= d['n_max'])
+        midpoint_range = next(d for d in range_list if midpoint >= d['n_min'] and midpoint <= d['n_max'])
     except StopIteration:
         raise StopIteration("The midpoint of the total does not fall within a data range.")
 
@@ -68,13 +70,13 @@ def approximate_median(range_list):
     midrange_gap = midpoint - midpoint_range['n_min']
 
     # What is the proportion of the group that would be needed to get the midpoint?
-    midrange_gap_percent = midrange_gap / midpoint_range['total']
+    midrange_gap_percent = midrange_gap / midpoint_range['n']
 
     # Apply this proportion to the width of the midrange
-    midrange_gap_adjusted = (range_['end'] - range_['start']) * midrange_gap_percent
+    midrange_gap_adjusted = (midpoint_range['max'] - midpoint_range['min']) * midrange_gap_percent
 
     # Estimate the median
-    estimated_median = range_['start'] + midrange_gap_adjusted
+    estimated_median = midpoint_range['min'] + midrange_gap_adjusted
 
     # Return the result
     return estimated_median

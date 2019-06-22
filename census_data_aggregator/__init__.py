@@ -38,10 +38,9 @@ def approximate_median(range_list):
 
     Expects a list of dictionaries with three keys:
 
-        start: The minimum value in the range
-        end: The maximum value in the range
-        total: The count of people, households or other universe figure in the range
-
+        min: The minimum value in the range
+        max: The maximum value in the range
+        n: The number of people, households or other universe figure in the range
     """
     # Sort the list
     range_list.sort(key=lambda x: x['start'])

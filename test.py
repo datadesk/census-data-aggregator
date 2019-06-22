@@ -28,22 +28,22 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
 
     def test_median(self):
         income = [
-            dict(start=-2500, end=9999, total=186),
-            dict(start=10000, end=14999, total=78),
-            dict(start=15000, end=19999, total=98),
-            dict(start=20000, end=24999, total=287),
-            dict(start=25000, end=29999, total=142),
-            dict(start=30000, end=34999, total=90),
-            dict(start=35000, end=39999, total=107),
-            dict(start=40000, end=44999, total=104),
-            dict(start=45000, end=49999, total=178),
-            dict(start=50000, end=59999, total=106),
-            dict(start=60000, end=74999, total=177),
-            dict(start=75000, end=99999, total=262),
-            dict(start=100000, end=124999, total=77),
-            dict(start=125000, end=149999, total=100),
-            dict(start=150000, end=199999, total=58),
-            dict(start=200000, end=250001, total=18)
+            dict(min=-2500, max=9999, n=186),
+            dict(min=10000, max=14999, n=78),
+            dict(min=15000, max=19999, n=98),
+            dict(min=20000, max=24999, n=287),
+            dict(min=25000, max=29999, n=142),
+            dict(min=30000, max=34999, n=90),
+            dict(min=35000, max=39999, n=107),
+            dict(min=40000, max=44999, n=104),
+            dict(min=45000, max=49999, n=178),
+            dict(min=50000, max=59999, n=106),
+            dict(min=60000, max=74999, n=177),
+            dict(min=75000, max=99999, n=262),
+            dict(min=100000, max=124999, n=77),
+            dict(min=125000, max=149999, n=100),
+            dict(min=150000, max=199999, n=58),
+            dict(min=200000, max=250001, n=18)
         ]
         self.assertEqual(
             census_data_aggregator.approximate_median(income),

@@ -1,34 +1,45 @@
 import math
 
 
-def approximate_margin_of_error(*pairs):
+def approximate_sum(*pairs):
     """
-    Returns the approximate margin of error after combining the provided Census Bureau estimates, taking into account each value's margin of error.
+    Returns the combined value of all the provided Census Bureau estimates, along with an approximated margin of error.
 
     Expects a series of arguments, each a paired list with the estimated value first and the margin of error second.
     """
     # According to the Census Bureau, when approximating a sum use only the largest zero estimate margin of error, once
     # https://www.documentcloud.org/documents/6162551-20180418-MOE.html#document/p52
     zeros = [p for p in pairs if p[0] == 0]
+    # So if there are zeros...
     if len(zeros) > 1:
+        # ... weed them out
         max_zero_margin = max([p[1] for p in zeros])
         not_zero_margins = [p[1] for p in pairs if p[0] != 0]
         margins = [max_zero_margin] + not_zero_margins
+    # If not, just keep all the input margins
     else:
         margins = [p[1] for p in pairs]
-    return math.sqrt(sum([m**2 for m in margins]))
+
+    # Calculate the margin using the bureau's official formula
+    margin_of_error = math.sqrt(sum([m**2 for m in margins]))
+
+    # Calculate the total
+    total = sum([p[0] for p in pairs])
+
+    # Return the results
+    return total, margin_of_error
 
 
-def total(*pairs):
+def approximate_sum_margin_of_error(*pairs):
     """
-    Returns the combined value of all the provided Census Bureau estimates, along with an approximated margin of error.
+    Returns the approximate margin of error after combining the provided Census Bureau estimates, taking into account each value's margin of error.
 
     Expects a series of arguments, each a paired list with the estimated value first and the margin of error second.
     """
-    return sum([p[0] for p in pairs]), approximate_margin_of_error(*pairs)
 
 
-def median(range_list):
+
+def approximate_median(range_list):
     """
     Returns the estimated median from a set of ranged totals.
 

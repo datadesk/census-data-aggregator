@@ -32,11 +32,11 @@ def approximate_sum(*pairs):
     return total, margin_of_error
 
 
-def approximate_median(range_list):
+def approximate_median(range_list, design_factor=1.5):
     """
-    Returns the estimated median from a set of ranged totals.
+    Returns the estimated median from a set of ranged totals, , along with an approximated margin of error.
 
-    Useful for generated medians for measures like median household income and median agn when aggregating census geographies.
+    Useful for generating medians for measures like household income and age when aggregating census geographies.
 
     Expects a list of dictionaries with three keys:
 
@@ -47,12 +47,6 @@ def approximate_median(range_list):
     # Sort the list
     range_list.sort(key=lambda x: x['min'])
 
-    # What is the total number of observations in the universe?
-    n = sum([d['n'] for d in range_list])
-
-    # What is the midpoint of the universe?
-    midpoint = n / 2.0
-
     # For each range calculate its min and max value along the universe's scale
     cumulative_n = 0
     for range_ in range_list:
@@ -60,23 +54,89 @@ def approximate_median(range_list):
         cumulative_n += range_['n']
         range_['n_max'] = cumulative_n
 
+    # What is the total number of observations in the universe?
+    n = sum([d['n'] for d in range_list])
+
+    # What is the estimated midpoint of the n?
+    n_midpoint = n / 2.0
+
     # Now use those to determine which group contains the midpoint.
     try:
-        midpoint_range = next(d for d in range_list if midpoint >= d['n_min'] and midpoint <= d['n_max'])
+        n_midpoint_range = next(d for d in range_list if n_midpoint >= d['n_min'] and n_midpoint <= d['n_max'])
     except StopIteration:
-        raise StopIteration("The midpoint of the total does not fall within a data range.")
+        raise StopIteration("The n's midpoint does not fall within a data range.")
 
     # How many households in the midrange are needed to reach the midpoint?
-    midrange_gap = midpoint - midpoint_range['n_min']
+    n_midrange_gap = n_midpoint - n_midpoint_range['n_min']
 
     # What is the proportion of the group that would be needed to get the midpoint?
-    midrange_gap_percent = midrange_gap / midpoint_range['n']
+    n_midrange_gap_percent = n_midrange_gap / n_midpoint_range['n']
 
     # Apply this proportion to the width of the midrange
-    midrange_gap_adjusted = (midpoint_range['max'] - midpoint_range['min']) * midrange_gap_percent
+    n_midrange_gap_adjusted = (n_midpoint_range['max'] - n_midpoint_range['min']) * n_midrange_gap_percent
 
     # Estimate the median
-    estimated_median = midpoint_range['min'] + midrange_gap_adjusted
+    estimated_median = n_midpoint_range['min'] + n_midrange_gap_adjusted
+
+    # Get the standard error for this dataset
+    standard_error = (design_factor * math.sqrt((99/n)*(50**2))) / 100
+
+    # Use the standard error to calculate the p values
+    p_lower = (.5 - standard_error)
+    p_upper = (.5 + standard_error)
+
+    # Estimate the p_lower and p_upper n values
+    p_lower_n = n * p_lower
+    p_upper_n = n * p_upper
+
+    # Find the ranges the p values fall within
+    try:
+        p_lower_range_i, p_lower_range = next(
+            (i, d) for i, d in enumerate(range_list)
+                if p_lower_n >= d['n_min'] and p_lower_n <= d['n_max']
+        )
+    except StopIteration:
+        raise StopIteration("The n's lower p value does not fall within a data range.")
+
+    try:
+        p_upper_range_i, p_upper_range = next(
+            (i, d) for i, d in enumerate(range_list)
+                if p_upper_n >= d['n_min'] and p_upper_n <= d['n_max']
+        )
+    except StopIteration:
+        raise StopIteration("The n's higher p value does not fall within a data range.")
+
+    # Use these values to estimate the lower bound of the confidence interval
+    p_lower_a1 = p_lower_range['min']
+    try:
+        p_lower_a2 = range_list[p_lower_range_i+1]['min']
+    except IndexError:
+        p_lower_a2 = p_lower_range['max']
+    p_lower_c1 = p_lower_range['n_min'] / n
+    try:
+        p_lower_c2 = range_list[p_lower_range_i+1]['n_min'] / n
+    except IndexError:
+        p_lower_c2 = p_lower_range['n_max'] / n
+    lower_bound = ((p_lower - p_lower_c1) / (p_lower_c2 - p_lower_c1)) * (p_lower_a2 - p_lower_a1) + p_lower_a1
+
+    # Same for the upper bound
+    p_upper_a1 = p_upper_range['min']
+    try:
+        p_upper_a2 = range_list[p_upper_range_i+1]['min']
+    except IndexError:
+        p_upper_a2 = p_upper_range['max']
+    p_upper_c1 = p_upper_range['n_min'] / n
+    try:
+        p_upper_c2 = range_list[p_upper_range_i+1]['n_min'] / n
+    except IndexError:
+        p_upper_c2 = p_upper_range['n_max'] / n
+    upper_bound = ((p_upper - p_upper_c1) / (p_upper_c2 - p_upper_c1)) * (p_upper_a2 - p_upper_a1) + p_upper_a1
+
+    # Calculate the standard error of the median
+    standard_error_median = 0.5 * (upper_bound - lower_bound)
+
+    # Calculate the margin of error at the 90% confidence level
+    margin_of_error = 1.645 * standard_error_median
 
     # Return the result
-    return estimated_median
+    return estimated_median, margin_of_error

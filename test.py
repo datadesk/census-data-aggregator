@@ -46,7 +46,7 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
         ]
         self.assertEqual(
             census_data_aggregator.approximate_median(income),
-            42211.096153846156
+            (42211.096153846156, 27260.315546093672)
         )
 
 

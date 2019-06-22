@@ -46,33 +46,36 @@ def approximate_median(range_list):
     # Sort the list
     range_list.sort(key=lambda x: x['start'])
 
-    # What is the total number in the universe
-    universe = sum([d['total'] for d in range_list])
+    # What is the total number of observations in the universe?
+    n = sum([d['total'] for d in range_list])
 
-    # What is the midpoint of that total?
-    midpoint = universe / 2.0
+    # What is the midpoint of the universe?
+    midpoint = n / 2.0
 
-    # What group contains the midpoint?
+    # For each range calculate its min and max value along the universe's scale
     running_total = 0
     for range_ in range_list:
-        # Here we find it...
-        if midpoint >= running_total and midpoint <= (running_total + range_['total']):
-            # How many households in the midrange are needed to reach the midpoint?
-            midrange_gap = midpoint - running_total
+        range_['n_min'] = running_total
+        range_['n_max'] = running_total + range_['total']
+        running_total += range_['total']
 
-            # What is the proportion of the group that would be needed to get the midpoint?
-            midrange_gap_percent = midrange_gap / range_['total']
+    # Now use those to determine which group contains the midpoint.
+    try:
+        midpoint_range = next(d for d in range_ if midpoint >= d['n_min'] and mindpoint <= d['n_max'])
+    except StopIteration:
+        raise StopIteration("The midpoint of the total does not fall within a data range.")
 
-            # Apply this proportion to the width of the midrange
-            midrange_gap_adjusted = (range_['end'] - range_['start']) * midrange_gap_percent
+    # How many households in the midrange are needed to reach the midpoint?
+    midrange_gap = midpoint - midpoint_range['n_min']
 
-            # Estimate the median
-            estimated_median = range_['start'] + midrange_gap_adjusted
+    # What is the proportion of the group that would be needed to get the midpoint?
+    midrange_gap_percent = midrange_gap / midpoint_range['total']
 
-            # Return the result
-            return estimated_median
-        else:
-            running_total += range_['total']
+    # Apply this proportion to the width of the midrange
+    midrange_gap_adjusted = (range_['end'] - range_['start']) * midrange_gap_percent
 
-    # If we got this far something is wrong
-    raise ValueError("The midpoint of the total does not fall within a data range.")
+    # Estimate the median
+    estimated_median = range_['start'] + midrange_gap_adjusted
+
+    # Return the result
+    return estimated_median

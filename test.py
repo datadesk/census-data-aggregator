@@ -18,7 +18,7 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
         # With multiple zeros
         self.assertEqual(
             census_data_aggregator.approximate_sum(
-                [0, 22],
+                [0.0, 22],
                 [0, 22],
                 [0, 29],
                 [41, 37]

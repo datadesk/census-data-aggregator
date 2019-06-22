@@ -46,7 +46,7 @@ def approximate_median(range_list, design_factor=None):
         max: The maximum value in the range
         n: The number of people, households or other universe figure in the range
 
-    For a margin of error to be returned, a "design factor" must be provided to calculate the standard errorself.
+    For a margin of error to be returned, a "design factor" must be provided to calculate the standard error.
 
     Design factors for different census surveys and tables can be found in the "PUMS Accuracy" CSV files. https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html
     """
@@ -116,7 +116,7 @@ def approximate_median(range_list, design_factor=None):
                 if p_upper_n >= d['n_min'] and p_upper_n <= d['n_max']
         )
     except StopIteration:
-        raise StopIteration("The n's higher p value does not fall within a data range.")
+        raise StopIteration("The n's upper p value does not fall within a data range.")
 
     # Use these values to estimate the lower bound of the confidence interval
     p_lower_a1 = p_lower_range['min']

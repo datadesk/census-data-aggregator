@@ -50,7 +50,8 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             (42211.096153846156, 27260.315546093672)
         )
         with self.assertWarns(DesignFactorWarning):
-            census_data_aggregator.approximate_median(income)
+            m, moe = census_data_aggregator.approximate_median(income)
+            self.assertTrue(moe == None)
 
 
 

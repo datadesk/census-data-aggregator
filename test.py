@@ -48,3 +48,7 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             census_data_aggregator.approximate_median(income),
             42211.096153846156
         )
+
+
+if __name__ == '__main__':
+    unittest.main()

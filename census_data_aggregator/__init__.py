@@ -30,15 +30,6 @@ def approximate_sum(*pairs):
     return total, margin_of_error
 
 
-def approximate_sum_margin_of_error(*pairs):
-    """
-    Returns the approximate margin of error after combining the provided Census Bureau estimates, taking into account each value's margin of error.
-
-    Expects a series of arguments, each a paired list with the estimated value first and the margin of error second.
-    """
-
-
-
 def approximate_median(range_list):
     """
     Returns the estimated median from a set of ranged totals.

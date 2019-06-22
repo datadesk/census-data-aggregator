@@ -23,7 +23,7 @@ Import the library.
 
 #### Approximating sums
 
-Returns the combined sum of all the provided Census Bureau estimates, along with an approximated margin of error.
+Returns the combined sum of all the provided Census Bureau estimates, along with an approximated margin of error. Useful when aggregating census categories or geographies. 
 
 Accepts a series of arguments, each a paired list with the estimated value first and the margin of error second.
 

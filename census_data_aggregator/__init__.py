@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import math
+import warnings
+from .exceptions import DesignFactorWarning
 
 
 def approximate_sum(*pairs):
@@ -32,9 +34,9 @@ def approximate_sum(*pairs):
     return total, margin_of_error
 
 
-def approximate_median(range_list, design_factor=1.5):
+def approximate_median(range_list, design_factor=None):
     """
-    Returns the estimated median from a set of ranged totals, , along with an approximated margin of error.
+    Returns the estimated median from a set of ranged totals, along with an approximated margin of error.
 
     Useful for generating medians for measures like household income and age when aggregating census geographies.
 
@@ -43,6 +45,10 @@ def approximate_median(range_list, design_factor=1.5):
         min: The minimum value in the range
         max: The maximum value in the range
         n: The number of people, households or other universe figure in the range
+
+    For a margin of error to be returned, a "design factor" must be provided to calculate the standard errorself.
+
+    Design factors for different census surveys and tables can be found in the "PUMS Accuracy" CSV files. https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html
     """
     # Sort the list
     range_list.sort(key=lambda x: x['min'])
@@ -77,6 +83,12 @@ def approximate_median(range_list, design_factor=1.5):
 
     # Estimate the median
     estimated_median = n_midpoint_range['min'] + n_midrange_gap_adjusted
+
+    # If there's no design factor, we can't calculate a margin of error
+    if not design_factor:
+        # Let's throw a warning, but still return the median
+        warnings.warn("", DesignFactorWarning)
+        return estimated_median, None
 
     # Get the standard error for this dataset
     standard_error = (design_factor * math.sqrt((99/n)*(50**2))) / 100

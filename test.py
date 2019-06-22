@@ -1,5 +1,6 @@
 import unittest
 import census_data_aggregator
+from census_data_aggregator.exceptions import DesignFactorWarning
 
 
 class CensusErrorAnalyzerTest(unittest.TestCase):
@@ -45,9 +46,12 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             dict(min=200000, max=250001, n=18)
         ]
         self.assertEqual(
-            census_data_aggregator.approximate_median(income),
+            census_data_aggregator.approximate_median(income, design_factor=1.5),
             (42211.096153846156, 27260.315546093672)
         )
+        with self.assertWarns(DesignFactorWarning):
+            census_data_aggregator.approximate_median(income)
+
 
 
 if __name__ == '__main__':

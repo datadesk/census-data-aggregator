@@ -23,7 +23,7 @@ Import the library.
 
 #### Approximating sums
 
-Sum estimates from the U.S. Census Bureau and approximate the combined margin of error. Follows the U.S. Census Bureau's [official guidelines](https://www.documentcloud.org/documents/6162551-20180418-MOE.html) for how to calculate a new margin of error when totaling multiple values. Useful for aggregating census categories and geographies.
+Total together estimates from the U.S. Census Bureau and approximate the combined margin of error. Follows the U.S. Census Bureau's [official guidelines](https://www.documentcloud.org/documents/6162551-20180418-MOE.html) for how to calculate a new margin of error when totaling multiple values. Useful for aggregating census categories and geographies.
 
 Accepts an open-ended set of paired lists, each expected to provide an estimate followed by its margin of error.
 

@@ -2,14 +2,39 @@
 # -*- coding: utf-8 -*-
 import math
 import warnings
-from .exceptions import DesignFactorWarning
+from .exceptions import DesignFactorWarning, DataError
 
 
 def approximate_sum(*pairs):
     """
-    Returns the combined value of all the provided Census Bureau estimates, along with an approximated margin of error.
+    Sum estimates from the U.S. Census Bureau and approximate their combined margin of error.
 
-    Expects a series of arguments, each a paired list with the estimated value first and the margin of error second.
+    Follows the U.S. Census Bureau's `official guidelines`_ for how to calculate a new margin of error
+    when totaling multiple values. Useful for aggregating census categories and geographies.
+
+    Args:
+        *pairs (list): An open-ended set of paired lists, each expected to provide an
+            estimate first followed by its margin of error.
+
+    Returns:
+        A two-item tuple with the summed total followed by the approximated margin of error.
+
+        (19866960, 5437.757350231803)
+
+    Examples:
+        Combining the under-five male population with under-five female population
+        to calculate a grand total of children under five.
+
+        >>> males_under_5, males_under_5_moe = 10154024, 3778
+        >>> females_under_5, females_under_5_moe = 9712936, 3911
+        >>> census_data_aggregator.approximate_sum(
+            (males_under_5, males_under_5_moe),
+            (females_under_5, females_under_5_moe)
+        )
+        19866960, 5437.757350231803
+
+    .. _official guidelines:
+        https://www.documentcloud.org/documents/6162551-20180418-MOE.html
     """
     # According to the Census Bureau, when approximating a sum use only the largest zero estimate margin of error, once
     # https://www.documentcloud.org/documents/6162551-20180418-MOE.html#document/p52
@@ -67,10 +92,7 @@ def approximate_median(range_list, design_factor=None):
     n_midpoint = n / 2.0
 
     # Now use those to determine which group contains the midpoint.
-    try:
-        n_midpoint_range = next(d for d in range_list if n_midpoint >= d['n_min'] and n_midpoint <= d['n_max'])
-    except StopIteration:
-        raise StopIteration("The n's midpoint does not fall within a data range.")
+    n_midpoint_range = next(d for d in range_list if n_midpoint >= d['n_min'] and n_midpoint <= d['n_max'])
 
     # How many households in the midrange are needed to reach the midpoint?
     n_midrange_gap = n_midpoint - n_midpoint_range['n_min']
@@ -108,7 +130,7 @@ def approximate_median(range_list, design_factor=None):
                 if p_lower_n >= d['n_min'] and p_lower_n <= d['n_max']
         )
     except StopIteration:
-        raise StopIteration("The n's lower p value does not fall within a data range.")
+        raise DataError(f"The n's lower p value {p_lower_n} does not fall within a data range.")
 
     try:
         p_upper_range_i, p_upper_range = next(
@@ -116,7 +138,7 @@ def approximate_median(range_list, design_factor=None):
                 if p_upper_n >= d['n_min'] and p_upper_n <= d['n_max']
         )
     except StopIteration:
-        raise StopIteration("The n's upper p value does not fall within a data range.")
+        raise DataError(f"The n's upper p value {p_upper_n} does not fall within a data range.")
 
     # Use these values to estimate the lower bound of the confidence interval
     p_lower_a1 = p_lower_range['min']

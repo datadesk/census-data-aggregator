@@ -1,6 +1,9 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+import doctest
 import unittest
 import census_data_aggregator
-from census_data_aggregator.exceptions import DesignFactorWarning
+from census_data_aggregator.exceptions import DesignFactorWarning, DataError
 
 
 class CensusErrorAnalyzerTest(unittest.TestCase):
@@ -49,11 +52,34 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             census_data_aggregator.approximate_median(income, design_factor=1.5),
             (42211.096153846156, 27260.315546093672)
         )
+
         with self.assertWarns(DesignFactorWarning):
             m, moe = census_data_aggregator.approximate_median(income)
             self.assertTrue(moe == None)
+
+        # Test a sample size so small the p values fail
+        with self.assertRaises(DataError):
+            bad_data = [
+                dict(min=0, max=49999, n=5),
+                dict(min=50000, max=99999, n=5),
+                dict(min=100000, max=199999, n=5),
+                dict(min=200000, max=250001, n=5)
+            ]
+            census_data_aggregator.approximate_median(bad_data, design_factor=1.5)
+
+        top_median = [
+            dict(min=0, max=49999, n=50),
+            dict(min=50000, max=99999, n=50),
+            dict(min=100000, max=199999, n=50),
+            dict(min=200000, max=250001, n=5000)
+        ]
+        census_data_aggregator.approximate_median(top_median, design_factor=1.5)
+
+    def test_exception(self):
+        DesignFactorWarning().__str__()
 
 
 
 if __name__ == '__main__':
     unittest.main()
+    doctest.testmod("census_data_aggregator/__init__.py")

@@ -2,9 +2,16 @@
 # -*- coding: utf-8 -*-
 
 
+class DataError(Exception):
+    """
+    Raised by the data submitted to the function is invalid.
+    """
+    pass
+
+
 class DesignFactorWarning(Warning):
     """
-    Warns that you have provided a design factor.
+    Warns that you have not provided a design factor.
     """
     def __str__(self):
         return """A margin of error cannot be calculated unless you provide a design factor.

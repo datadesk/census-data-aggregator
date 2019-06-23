@@ -86,6 +86,12 @@ If a design factor is not provided, no margin of error will be returned.
 42211.096153846156, None
 ```
 
+### A note from the experts
+
+The California State Data Center's Demographic Research Unit [notes](https://www.documentcloud.org/documents/6165014-How-to-Recalculate-a-Median.html#document/p4/a508562):
+
+>>> The user should be aware that the formulas are actually approximations that overstate the MOE compared to the more precise methods based on the actual survey returns that the Census Bureau uses. Therefore, the calculate MOEs will be higher, or more conservative, than those found in published tabulations for similarly-sized areas. This knowledge may a affect the level of error you are willing to accept.
+
 ### References
 
 This module was designed to conform with the Census Bureau's April 18, 2018, presentation ["Using American Community Survey Estimates and Margin of Error"](https://www.documentcloud.org/documents/6162551-20180418-MOE.html), the bureau's [PUMS Accuracy statement](https://www.documentcloud.org/documents/6165603-2013-2017AccuracyPUMS.html) and the California State Data Center's 2016 edition of ["Recalculating medians and their margins of error for aggregated ACS data."](https://www.documentcloud.org/documents/6165014-How-to-Recalculate-a-Median.html)

@@ -31,7 +31,7 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
 
     def test_median(self):
         income = [
-            dict(min=-2500, max=9999, n=186),
+            dict(min=2499, max=9999, n=186),
             dict(min=10000, max=14999, n=78),
             dict(min=15000, max=19999, n=98),
             dict(min=20000, max=24999, n=287),

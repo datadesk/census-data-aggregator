@@ -72,6 +72,8 @@ def approximate_median(range_list, design_factor=None):
                 * min (int): The minimum value of the range
                 * max (int): The maximum value of the range
                 * n (int): The number of people, households or other unit in the range
+
+            The minimum value in the first range and the maximum value in the last range can be tailored to the dataset by using the "jam values" provided in the `American Community Survey's technical documentation`_.
         design_factor (float, optional): A statistical input used to tailor the standard error to the
             variance of the dataset. The Census Bureau publishes design factors as part of its PUMS Accuracy statement.
             Find the value for the dataset you are estimating by referring to `the bureau's reference material`_.
@@ -86,7 +88,7 @@ def approximate_median(range_list, design_factor=None):
         Estimating the median for a range of median household incomes.
 
         >>> income = [
-            dict(min=-2500, max=9999, n=186),
+            dict(min=2499, max=9999, n=186),
             dict(min=10000, max=14999, n=78),
             dict(min=15000, max=19999, n=98),
             dict(min=20000, max=24999, n=287),
@@ -108,6 +110,8 @@ def approximate_median(range_list, design_factor=None):
 
     ... _official guidelines:
         https://www.documentcloud.org/documents/6165603-2013-2017AccuracyPUMS.html#document/p18
+    ... _American Community Survey's technical documentation
+        https://www.documentcloud.org/documents/6165752-2017-SummaryFile-Tech-Doc.html#document/p20/a508561
     ... _the bureau's reference material:
         https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html
     """

@@ -25,7 +25,7 @@ Import the library.
 
 Sum estimates from the U.S. Census Bureau and approximate the combined margin of error. Follows the U.S. Census Bureau's [official guidelines](https://www.documentcloud.org/documents/6162551-20180418-MOE.html) for how to calculate a new margin of error when totaling multiple values. Useful for aggregating census categories and geographies.
 
-An open-ended set of paired lists, each expected to provide an estimate followed by its margin of error.
+Accepts an open-ended set of paired lists, each expected to provide an estimate followed by its margin of error.
 
 ```python
 >>> males_under_5, males_under_5_moe = 10154024, 3778
@@ -41,7 +41,7 @@ An open-ended set of paired lists, each expected to provide an estimate followed
 
 Estimate a median and approximate the margin of error. Follows the U.S. Census Bureau's official guidelines for estimation using a design factor. Useful for generating medians for measures like household income and age when aggregating census geographies.
 
-Expects A list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have three keys:
+Expects a list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have three keys:
 
 | key | value                                                               |
 |-----|---------------------------------------------------------------------|
@@ -49,9 +49,11 @@ Expects A list of dictionaries that divide the full range of data values into co
 | max | The maximum value of the range                                      |
 | n   | The number of people, households or other units in the range        |
 
+The minimum value in the first range and the maximum value in the last range can be tailored to the dataset by using the "jam values" provided in the [American Community Survey's technical documentation](https://www.documentcloud.org/documents/6165752-2017-SummaryFile-Tech-Doc.html#document/p20/a508561).
+
 ```python
 >>> income = [
-    dict(min=-2500, max=9999, n=186),
+    dict(min=2499, max=9999, n=186),
     dict(min=10000, max=14999, n=78),
     dict(min=15000, max=19999, n=98),
     dict(min=20000, max=24999, n=287),

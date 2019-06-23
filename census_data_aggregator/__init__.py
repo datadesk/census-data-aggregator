@@ -153,7 +153,7 @@ def approximate_median(range_list, design_factor=None):
         return estimated_median, None
 
     # Get the standard error for this dataset
-    standard_error = (design_factor * math.sqrt((99/n)*(50**2))) / 100
+    standard_error = (design_factor * math.sqrt((99 / n) * (50**2))) / 100
 
     # Use the standard error to calculate the p values
     p_lower = (.5 - standard_error)
@@ -167,7 +167,7 @@ def approximate_median(range_list, design_factor=None):
     try:
         p_lower_range_i, p_lower_range = next(
             (i, d) for i, d in enumerate(range_list)
-                if p_lower_n >= d['n_min'] and p_lower_n <= d['n_max']
+            if p_lower_n >= d['n_min'] and p_lower_n <= d['n_max']
         )
     except StopIteration:
         raise DataError(f"The n's lower p value {p_lower_n} does not fall within a data range.")
@@ -175,7 +175,7 @@ def approximate_median(range_list, design_factor=None):
     try:
         p_upper_range_i, p_upper_range = next(
             (i, d) for i, d in enumerate(range_list)
-                if p_upper_n >= d['n_min'] and p_upper_n <= d['n_max']
+            if p_upper_n >= d['n_min'] and p_upper_n <= d['n_max']
         )
     except StopIteration:
         raise DataError(f"The n's upper p value {p_upper_n} does not fall within a data range.")
@@ -183,12 +183,12 @@ def approximate_median(range_list, design_factor=None):
     # Use these values to estimate the lower bound of the confidence interval
     p_lower_a1 = p_lower_range['min']
     try:
-        p_lower_a2 = range_list[p_lower_range_i+1]['min']
+        p_lower_a2 = range_list[p_lower_range_i + 1]['min']
     except IndexError:
         p_lower_a2 = p_lower_range['max']
     p_lower_c1 = p_lower_range['n_min'] / n
     try:
-        p_lower_c2 = range_list[p_lower_range_i+1]['n_min'] / n
+        p_lower_c2 = range_list[p_lower_range_i + 1]['n_min'] / n
     except IndexError:
         p_lower_c2 = p_lower_range['n_max'] / n
     lower_bound = ((p_lower - p_lower_c1) / (p_lower_c2 - p_lower_c1)) * (p_lower_a2 - p_lower_a1) + p_lower_a1
@@ -196,12 +196,12 @@ def approximate_median(range_list, design_factor=None):
     # Same for the upper bound
     p_upper_a1 = p_upper_range['min']
     try:
-        p_upper_a2 = range_list[p_upper_range_i+1]['min']
+        p_upper_a2 = range_list[p_upper_range_i + 1]['min']
     except IndexError:
         p_upper_a2 = p_upper_range['max']
     p_upper_c1 = p_upper_range['n_min'] / n
     try:
-        p_upper_c2 = range_list[p_upper_range_i+1]['n_min'] / n
+        p_upper_c2 = range_list[p_upper_range_i + 1]['n_min'] / n
     except IndexError:
         p_upper_c2 = p_upper_range['n_max'] / n
     upper_bound = ((p_upper - p_upper_c1) / (p_upper_c2 - p_upper_c1)) * (p_upper_a2 - p_upper_a1) + p_upper_a1

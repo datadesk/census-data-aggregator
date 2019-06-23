@@ -23,9 +23,9 @@ Import the library.
 
 #### Approximating sums
 
-Returns the combined sum of all the provided Census Bureau estimates, along with an approximated margin of error. Useful when aggregating census categories or geographies. 
+Sum estimates from the U.S. Census Bureau and approximate the combined margin of error. Follows the U.S. Census Bureau's [official guidelines](https://www.documentcloud.org/documents/6162551-20180418-MOE.html) for how to calculate a new margin of error when totaling multiple values. Useful for aggregating census categories and geographies.
 
-Accepts a series of arguments, each a paired list with the estimated value first and the margin of error second.
+An open-ended set of paired lists, each expected to provide an estimate followed by its margin of error.
 
 ```python
 >>> males_under_5, males_under_5_moe = 10154024, 3778
@@ -39,17 +39,15 @@ Accepts a series of arguments, each a paired list with the estimated value first
 
 #### Approximating medians
 
-Returns the estimated median from a set of ranged totals, along with an approximated margin of error. Useful for generating medians for measures like household income and age when aggregating census geographies.
+Estimate a median and approximate the margin of error. Follows the U.S. Census Bureau's official guidelines for estimation using a design factor. Useful for generating medians for measures like household income and age when aggregating census geographies.
 
-Expects a list of dictionaries with three keys:
+Expects A list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have three keys:
 
 | key | value                                                               |
 |-----|---------------------------------------------------------------------|
 | min | The minimum value of the range                                      |
 | max | The maximum value of the range                                      |
-| n   | The number of people, households or other observations in the range |
-
-For a margin of error to be returned, a "design factor" must be provided to calculate the standard error. Design factors for different census surveys and tables can be found in [the "PUMS Accuracy" CSV files](https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html).
+| n   | The number of people, households or other units in the range        |
 
 ```python
 >>> income = [
@@ -70,6 +68,11 @@ For a margin of error to be returned, a "design factor" must be provided to calc
     dict(min=150000, max=199999, n=58),
     dict(min=200000, max=250001, n=18)
 ]
+```
+
+For a margin of error to be returned, a "design factor" must be provided to calculate the standard error. The statistical input is used to tailor the estimate to the variance of the dataset. The Census Bureau publishes design factors as part of its PUMS Accuracy statement. Find the value for the dataset you are estimating by referring to [the bureau's reference material](https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html).
+
+```python
 >>> census_data_aggregator.approximate_median(income, design_factor=1.5)
 42211.096153846156, 27260.315546093672
 ```
@@ -83,4 +86,4 @@ If a design factor is not provided, no margin of error will be returned.
 
 ### References
 
-This module was designed to conform with the Census Bureau's April 18, 2018, presentation ["Using American Community Survey Estimates and Margin of Error"](https://www.documentcloud.org/documents/6162551-20180418-MOE.html) and the California State Data Center's 2016 edition of ["Recalculating medians and their margins of error for aggregated ACS data."](https://www.documentcloud.org/documents/6165014-How-to-Recalculate-a-Median.html)
+This module was designed to conform with the Census Bureau's April 18, 2018, presentation ["Using American Community Survey Estimates and Margin of Error"](https://www.documentcloud.org/documents/6162551-20180418-MOE.html), the bureau's [PUMS Accuracy statement](https://www.documentcloud.org/documents/6165603-2013-2017AccuracyPUMS.html) and the California State Data Center's 2016 edition of ["Recalculating medians and their margins of error for aggregated ACS data."](https://www.documentcloud.org/documents/6165014-How-to-Recalculate-a-Median.html)

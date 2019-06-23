@@ -79,7 +79,6 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
         DesignFactorWarning().__str__()
 
 
-
 if __name__ == '__main__':
     unittest.main()
     doctest.testmod("census_data_aggregator/__init__.py")

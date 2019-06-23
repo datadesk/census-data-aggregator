@@ -27,7 +27,7 @@ def approximate_sum(*pairs):
 
         >>> males_under_5, males_under_5_moe = 10154024, 3778
         >>> females_under_5, females_under_5_moe = 9712936, 3911
-        >>> census_data_aggregator.approximate_sum(
+        >>> approximate_sum(
             (males_under_5, males_under_5_moe),
             (females_under_5, females_under_5_moe)
         )
@@ -105,7 +105,7 @@ def approximate_median(range_list, design_factor=None):
             dict(min=150000, max=199999, n=58),
             dict(min=200000, max=250001, n=18)
         ]
-        >>> census_data_aggregator.approximate_median(income, design_factor=1.5)
+        >>> approximate_median(income, design_factor=1.5)
         (42211.096153846156, 27260.315546093672)
 
     ... _official guidelines:

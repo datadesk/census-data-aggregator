@@ -69,11 +69,9 @@ def approximate_median(range_list, design_factor=None):
     Args:
         range_list (list): A list of dictionaries that divide the full range of data values into continuous categories.
             Each dictionary should have three keys:
-
                 * min (int): The minimum value of the range
                 * max (int): The maximum value of the range
                 * n (int): The number of people, households or other unit in the range
-
             The minimum value in the first range and the maximum value in the last range can be tailored to the dataset
             by using the "jam values" provided in the `American Community Survey's technical documentation`_.
         design_factor (float, optional): A statistical input used to tailor the standard error to the

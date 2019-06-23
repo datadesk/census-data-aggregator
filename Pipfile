@@ -6,8 +6,6 @@ verify_ssl = true
 [dev-packages]
 pandas = "*"
 jupyterlab = "*"
-census-data-downloader = "*"
-census-error-analyzer = "*"
 twine = "*"
 flake8 = "*"
 coverage = "*"

@@ -2,8 +2,8 @@ from setuptools import setup
 
 
 setup(
-    name='census-error-analyzer',
-    version='0.0.1',
+    name='census-data-aggregator',
+    version='0.0.2',
     description="Combine U.S. census data responsibly",
     author='Los Angeles Times Data Desk',
     author_email='datadesk@latimes.com',

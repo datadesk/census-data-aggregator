@@ -6,6 +6,9 @@ Combine U.S. census data responsibly
 
 * Approximating sums
 * Approximating medians
+* Approximating proportions
+* Approximating ratios
+* Approximating products
 
 ### Installation
 
@@ -92,6 +95,15 @@ The California State Data Center's Demographic Research Unit [notes](https://www
 
 > The user should be aware that the formulas are actually approximations that overstate the MOE compared to the more precise methods based on the actual survey returns that the Census Bureau uses. Therefore, the calculated MOEs will be higher, or more conservative, than those found in published tabulations for similarly-sized areas. This knowledge may affect the level of error you are willing to accept.
 
+### Approximating Ratios, Proportions, and Products
+
+The [Census Bureau's ACS 2018 General Handbook Chapter 8, "Calculating Measures of Error for Derived Estimates"](https://www.census.gov/content/dam/Census/library/publications/2018/acs/acs_general_handbook_2018_ch08.pdf) gives formulas for estimating the MOE for
+
+* Proportions X/Y between count estimates X and Y, where X is a subset of Y (Formula 6).
+* Ratios X/Y between count estimates X and Y, where X is not a subset of Y (Formula 7).
+* Products X*P between a count estimate X and a proportion estimate P (Formula 9).
+
+
 ### References
 
-This module was designed to conform with the Census Bureau's April 18, 2018, presentation ["Using American Community Survey Estimates and Margin of Error"](https://www.documentcloud.org/documents/6162551-20180418-MOE.html), the bureau's [PUMS Accuracy statement](https://www.documentcloud.org/documents/6165603-2013-2017AccuracyPUMS.html) and the California State Data Center's 2016 edition of ["Recalculating medians and their margins of error for aggregated ACS data."](https://www.documentcloud.org/documents/6165014-How-to-Recalculate-a-Median.html)
+This module was designed to conform with the Census Bureau's April 18, 2018, presentation ["Using American Community Survey Estimates and Margin of Error"](https://www.documentcloud.org/documents/6162551-20180418-MOE.html), the bureau's [PUMS Accuracy statement](https://www.documentcloud.org/documents/6165603-2013-2017AccuracyPUMS.html) and the California State Data Center's 2016 edition of ["Recalculating medians and their margins of error for aggregated ACS data."](https://www.documentcloud.org/documents/6165014-How-to-Recalculate-a-Median.html), and the Census Bureau's [ACS 2018 General Handbook Chapter 8, "Calculating Measures of Error for Derived Estimates"](https://www.census.gov/content/dam/Census/library/publications/2018/acs/acs_general_handbook_2018_ch08.pdf)

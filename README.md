@@ -92,6 +92,10 @@ The California State Data Center's Demographic Research Unit [notes](https://www
 
 > The user should be aware that the formulas are actually approximations that overstate the MOE compared to the more precise methods based on the actual survey returns that the Census Bureau uses. Therefore, the calculated MOEs will be higher, or more conservative, than those found in published tabulations for similarly-sized areas. This knowledge may affect the level of error you are willing to accept.
 
+The American Community Survey's handbook adds:
+
+> As the number of estimates involved in a sum or difference increases, the results of the approximation formula become increasingly different from the [standard error] derived directly from the ACS microdata. Users are encouraged to work with the fewest number of estimates possible. 
+
 ### References
 
 This module was designed to conform with the Census Bureau's April 18, 2018, presentation ["Using American Community Survey Estimates and Margin of Error"](https://www.documentcloud.org/documents/6162551-20180418-MOE.html), the bureau's [PUMS Accuracy statement](https://www.documentcloud.org/documents/6165603-2013-2017AccuracyPUMS.html) and the California State Data Center's 2016 edition of ["Recalculating medians and their margins of error for aggregated ACS data."](https://www.documentcloud.org/documents/6165014-How-to-Recalculate-a-Median.html)

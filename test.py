@@ -28,6 +28,16 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             ),
             (41, 47.01063709417264)
         )
+        # From the ACS handbook examples
+        single_women = (
+            (135173, 3860),
+            (43104, 2642),
+            (24842, 1957)
+        )
+        self.assertEqual(
+            census_data_aggregator.approximate_sum(*single_women),
+            (203119, 5070.4647715963865)
+        )
 
     def test_median(self):
         income = [

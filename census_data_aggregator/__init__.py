@@ -216,8 +216,6 @@ def approximate_median(range_list, design_factor=None):
     return estimated_median, margin_of_error
 
 
-
-
 def approximate_proportion(numerator_pair, denominator_pair):
     """
     Calculates an estimate of the proportion and its approximate MOE

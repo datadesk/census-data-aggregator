@@ -88,6 +88,34 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
     def test_exception(self):
         DesignFactorWarning().__str__()
 
+    def test_sum(self):
+        estimate, moe = census_data_aggregator.approximate_sum((379, 1), (384, 1))
+        self.assertAlmostEqual(estimate, 763)
+        self.assertAlmostEqual(moe, 1.4142135623730951)
+
+    def test_proportion(self):
+        estimate, moe = census_data_aggregator.approximate_proportion((379, 1), (384, 1))
+        self.assertAlmostEqual(estimate, 0.9869791666666666)
+        self.assertAlmostEqual(moe, 0.008208247339752435)
+
+        # From the Census handbook
+        estimate, moe = census_data_aggregator.approximate_proportion(
+            (203119, 5070),
+            (630498, 831)
+        )
+        self.assertAlmostEqual(estimate, 0.32215645)
+        self.assertAlmostEqual(moe, 0.008)
+
+    def test_ratio(self):
+        estimate, moe = census_data_aggregator.approximate_ratio((379, 1), (384, 1))
+        self.assertAlmostEqual(estimate, 0.9869791666666666)
+        self.assertAlmostEqual(moe, 0.07170047425884142)
+
+    def test_product(self):
+        estimate, moe = census_data_aggregator.approximate_product((384, 1), (0.987, 0.06))
+        self.assertAlmostEqual(estimate, 379.008)
+        self.assertAlmostEqual(moe, 23.061131130107213)
+
 
 if __name__ == '__main__':
     unittest.main()

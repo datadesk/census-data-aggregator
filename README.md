@@ -40,8 +40,20 @@ Accepts an open-ended set of paired lists, each expected to provide an estimate 
 19866960, 5437.757350231803
 ```
 
+
 #### Approximating proportions
 
+Calculate an estimate's proportion of another estimate and approximate the margin of error. Follows the bureau's [ACS handbook](https://www.documentcloud.org/documents/6162551-20180418-MOE.html). Simply multiply the result by 100 for a percentage.
+
+```python
+>>> single_women_in_virginia = 203119, 5070
+>>> total_women_in_virginia = 690746, 831
+>>> census_data_aggregator.approximate_proportion(
+    single_women_in_virginia,
+    total_women_in_virginia
+)
+0.322, 0.008
+```
 
 
 #### Approximating medians

@@ -219,7 +219,7 @@ def approximate_median(range_list, design_factor=None):
 
 def approximate_proportion(numerator_pair, denominator_pair):
     """
-    Calculate a value's proportion of a total and approximate the estimate's margin of error.
+    Calculate an estimate's proportion of another estimate and approximate the margin of error.
 
     Follows the U.S. Census Bureau's `official guidelines`_.
 

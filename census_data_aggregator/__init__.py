@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import division
 import math
 import warnings
 from .exceptions import DesignFactorWarning, DataError
@@ -242,10 +243,10 @@ def approximate_proportion(numerator_pair, denominator_pair):
     denominator_estimate, denominator_moe = denominator_pair
 
     # Approximate the proportion
-    proportion_estimate = 1.0 * numerator_estimate / denominator_estimate
+    proportion_estimate = numerator_estimate / denominator_estimate
 
     # Approximate the proportion MOE
-    squared_proportion_moe = 1.0 * (
+    squared_proportion_moe = (
         numerator_moe**2 - proportion_estimate**2 * denominator_moe**2
     ) / denominator_estimate**2
     return (proportion_estimate, math.sqrt(squared_proportion_moe))
@@ -280,7 +281,7 @@ def approximate_ratio(numerator_pair, denominator_pair):
     ratio_estimate = numerator_estimate / denominator_estimate
 
     # Approximate the ratio MOE
-    squared_ratio_moe = 1.0 * (
+    squared_ratio_moe = (
         numerator_moe**2 + ratio_estimate**2 * denominator_moe**2
     ) / denominator_estimate**2
 

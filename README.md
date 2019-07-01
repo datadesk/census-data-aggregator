@@ -123,6 +123,21 @@ Calculate the ratio between two estimates and approximate its margin of error. F
 ```
 
 
+### Approximating products
+
+Calculates the product of two estimates and approximates its margin of error. Follows the bureau's [ACS handbook](https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html).
+
+```python
+>>> owner_occupied_units = 74506512, 228238
+>>> single_family_percent = 0.824, 0.001
+>>> census_data_aggregator.approximate_product(
+    owner_occupied_units,
+    single_family_percent
+)
+61393366, 202289
+```
+
+
 ### A note from the experts
 
 The California State Data Center's Demographic Research Unit [notes](https://www.documentcloud.org/documents/6165014-How-to-Recalculate-a-Median.html#document/p4/a508562):

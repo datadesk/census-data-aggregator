@@ -258,6 +258,11 @@ def approximate_proportion(numerator_pair, denominator_pair):
 
     # Approximate the margin of error
     squared_proportion_moe = numerator_moe**2 - (proportion_estimate**2 * denominator_moe**2)
+    # Ensure it is greater than zero
+    if squared_proportion_moe < 0:
+        raise DataError(
+            "The margin of error is less than zero. Census experts advise using the approximate_ratio method instead."
+        )
     proportion_moe = (1.0 / denominator_estimate) * math.sqrt(squared_proportion_moe)
 
     # Return the result

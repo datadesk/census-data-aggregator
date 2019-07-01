@@ -45,7 +45,9 @@ Accepts an open-ended set of paired lists, each expected to provide an estimate 
 
 #### Approximating proportions
 
-Calculate an estimate's proportion of another estimate and approximate the margin of error. Follows the bureau's [ACS handbook](https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html). Simply multiply the result by 100 for a percentage.
+Calculate an estimate's proportion of another estimate and approximate the margin of error. Follows the bureau's [ACS handbook](https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html). Simply multiply the result by 100 for a percentage. Recommended when the first value is smaller than the second.
+
+Accepts two paired lists, each expected to provide an estimate followed by its margin of error. The numerator goes in first. The denominator goes in second. In cases where the numerator is larger, the bureau recommends using the ratio approximation method instead.
 
 ```python
 >>> single_women_in_virginia = 203119, 5070
@@ -112,6 +114,8 @@ If a design factor is not provided, no margin of error will be returned.
 
 Calculate the ratio between two estimates and approximate its margin of error. Follows the bureau's [ACS handbook](https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html).
 
+Accepts two paired lists, each expected to provide an estimate followed by its margin of error. The numerator goes in first. The denominator goes in second.
+
 ```python
 >>> single_men_in_virginia = 226840, 5556
 >>> single_women_in_virginia = 203119, 5070
@@ -126,6 +130,8 @@ Calculate the ratio between two estimates and approximate its margin of error. F
 #### Approximating products
 
 Calculates the product of two estimates and approximates its margin of error. Follows the bureau's [ACS handbook](https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html).
+
+Accepts two paired lists, each expected to provide an estimate followed by its margin of error.
 
 ```python
 >>> owner_occupied_units = 74506512, 228238

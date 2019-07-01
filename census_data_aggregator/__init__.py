@@ -347,3 +347,42 @@ def approximate_product(pair_one, pair_two):
 
     # Return the results
     return product_estimate, product_moe
+
+def approximate_percentchange(pair_one, pair_two):
+    """
+    Calculates the percent change from one time period to another and approximates its margin of error.
+
+    Follows the U.S. Census Bureau's `official guidelines`_.
+
+    Args:
+        pair_one (list): a two-item sequence with a U.S. Census
+            bureau estimate and its margin of error.
+
+        pair_two (list): a two-item sequence with a U.S. Census
+            bureau estimate and its margin of error.
+
+    Returns:
+        A two-item sequence containing the estimate and its approximate margin of error.
+
+    Examples:
+        
+
+    ... _official guidelines:
+        https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html#document/p8
+    """
+    # Pull out the values
+    estimate_one, moe_one = pair_one
+    estimate_two, moe_two = pair_two
+
+    # Approximate the percent change
+    percent_change_estimate = ((estimate_one - estimate_two) / estimate_two) * 100
+
+    # Approximate the margin of error
+    percent_change_as_ratio = approximate_ratio(pair_one,pair_two)
+    estimate, decimal_change_moe = percent_change_as_ratio
+    percent_change_moe = 100 * decimal_change_moe
+
+    # Return the results
+    return percent_change_estimate, percent_change_moe
+
+    

@@ -128,6 +128,12 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
         self.assertAlmostEqual(proportion, 0.322, places=3)
         self.assertAlmostEqual(moe, 0.008, places=3)
 
+        with self.assertRaises(DataError):
+            census_data_aggregator.approximate_proportion(
+                denominator,
+                numerator
+            )
+
     def test_ratio_ch8(self):
         # Never-married Males from table 8.5
         nmm_fairfax = (156720, 4222)

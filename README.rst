@@ -1,8 +1,8 @@
-
 census-data-aggregator
 ======================
 
 Combine U.S. census data responsibly
+
 
 Features
 ^^^^^^^^
@@ -12,6 +12,7 @@ Features
 * Approximating medians
 * Approximating ratios
 * Approximating products
+
 
 Installation
 ^^^^^^^^^^^^
@@ -175,7 +176,6 @@ The American Community Survey's handbook `adds <https://www.documentcloud.org/do
 ..
 
    As the number of estimates involved in a sum or difference increases, the results of the approximation formula become increasingly different from the [standard error] derived directly from the ACS microdata. Users are encouraged to work with the fewest number of estimates possible.
-
 
 
 References

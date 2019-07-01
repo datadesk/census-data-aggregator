@@ -1,0 +1,4 @@
+[run]
+include =
+    census_data_aggregator/__init__.py
+    census_data_aggregator/exceptions.py

@@ -261,7 +261,7 @@ def approximate_proportion(numerator_pair, denominator_pair):
     proportion_moe = (1.0 / denominator_estimate) * math.sqrt(squared_proportion_moe)
 
     # Return the result
-    return (proportion_estimate, proportion_moe)
+    return proportion_estimate, proportion_moe
 
 
 def approximate_ratio(numerator_pair, denominator_pair):
@@ -301,13 +301,14 @@ def approximate_ratio(numerator_pair, denominator_pair):
     ratio_moe = (1.0 / denominator_estimate) * math.sqrt(squared_ratio_moe)
 
     # Return the result
-    return (ratio_estimate, ratio_moe)
+    return ratio_estimate, ratio_moe
 
 
 def approximate_product(pair_one, pair_two):
     """
-    Calculates an estimate of the product and its approximate MOE from
-    the arguments.
+    Calculates the product of two estimates and approximates its margin of error.
+
+    Follows the U.S. Census Bureau's `official guidelines`_.
 
     Args:
         pair_one (list): a two-item sequence with a U.S. Census
@@ -317,12 +318,16 @@ def approximate_product(pair_one, pair_two):
             bureau estimate and its margin of error.
 
     Returns:
-        A two-item sequence containing the approximated estimate and its MOE.
+        A two-item sequence containing the estimate and its approximate margin of error.
+
+        (61393366, 202289)
 
     Examples:
-        >>> approximate_product((384, 1), (0.987, 0.06))
-        (379.008, 23.061131130107213)
+        >>> approximate_product((74506512, 228238), (0.824, 0.001))
+        (61393366, 202289)
 
+    ... _official guidelines:
+        https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html#document/p8
     """
     # Pull out the values
     estimate_one, moe_one = pair_one
@@ -331,7 +336,9 @@ def approximate_product(pair_one, pair_two):
     # Approximate the product
     product_estimate = estimate_one * estimate_two
 
-    # Approximate the product MOE
-    squared_product_moe = estimate_one**2 * moe_two**2 + estimate_two**2 * moe_one**2
+    # Approximate the margin of error
+    squared_product_moe = (estimate_one**2 * moe_two**2) + (estimate_two**2 * moe_one**2)
+    product_moe = math.sqrt(squared_product_moe)
 
-    return (product_estimate, math.sqrt(squared_product_moe))
+    # Return the results
+    return product_estimate, product_moe

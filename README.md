@@ -2,6 +2,7 @@
 
 Combine U.S. census data responsibly
 
+
 ### Features
 
 * Approximating sums
@@ -9,6 +10,7 @@ Combine U.S. census data responsibly
 * Approximating medians
 * Approximating ratios
 * Approximating products
+
 
 ### Installation
 
@@ -43,7 +45,7 @@ Accepts an open-ended set of paired lists, each expected to provide an estimate 
 
 #### Approximating proportions
 
-Calculate an estimate's proportion of another estimate and approximate the margin of error. Follows the bureau's [ACS handbook](https://www.documentcloud.org/documents/6162551-20180418-MOE.html). Simply multiply the result by 100 for a percentage.
+Calculate an estimate's proportion of another estimate and approximate the margin of error. Follows the bureau's [ACS handbook](https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html). Simply multiply the result by 100 for a percentage.
 
 ```python
 >>> single_women_in_virginia = 203119, 5070
@@ -104,6 +106,22 @@ If a design factor is not provided, no margin of error will be returned.
 >>> census_data_aggregator.approximate_median(income)
 42211.096153846156, None
 ```
+
+
+### Approximating ratios
+
+Calculate the ratio between two estimates and approximate its margin of error. Follows the bureau's [ACS handbook](https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html).
+
+```python
+>>> single_men_in_virginia = 226840, 5556
+>>> single_women_in_virginia = 203119, 5070
+>>> census_data_aggregator.approximate_ratio(
+    single_men_in_virginia,
+    single_women_in_virginia
+)
+1.117, 0.039
+```
+
 
 ### A note from the experts
 

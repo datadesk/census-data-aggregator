@@ -55,7 +55,7 @@ Approximating proportions
 
 Calculate an estimate's proportion of another estimate and approximate the margin of error. Follows the bureau's `ACS handbook <https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html>`_. Simply multiply the result by 100 for a percentage. Recommended when the first value is smaller than the second.
 
-Accepts two paired lists, each expected to provide an estimate followed by its margin of error. The numerator goes in first. The denominator goes in second. In cases where the numerator is not a subset of the denominator, the bureau recommends using the `approximate_ratio` method instead.
+Accepts two paired lists, each expected to provide an estimate followed by its margin of error. The numerator goes in first. The denominator goes in second. In cases where the numerator is not a subset of the denominator, the bureau recommends using the :python:`approximate_ratio` method instead.
 
 .. code-block:: python
 
@@ -130,7 +130,7 @@ Approximating ratios
 
 Calculate the ratio between two estimates and approximate its margin of error. Follows the bureau's `ACS handbook <https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html>`_.
 
-Accepts two paired lists, each expected to provide an estimate followed by its margin of error. The numerator goes in first. The denominator goes in second. In cases where the numerator is a subset of the denominator, the bureau recommends uses the `approximate_proportion` method.
+Accepts two paired lists, each expected to provide an estimate followed by its margin of error. The numerator goes in first. The denominator goes in second. In cases where the numerator is a subset of the denominator, the bureau recommends uses the :python:`approximate_proportion` method.
 
 .. code-block:: python
 

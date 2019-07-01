@@ -111,12 +111,19 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
         tf15_alexandria = (67101, 459)
 
         # Aggregate the values and MOEs
-        denominator = census_data_aggregator.approximate_sum(tf15_fairfax, tf15_arlington, tf15_alexandria)
+        denominator = census_data_aggregator.approximate_sum(
+            tf15_fairfax,
+            tf15_arlington,
+            tf15_alexandria
+        )
 
         numerator = (203119, 5070)
 
         # Calculate the proportion and its MOE
-        proportion, moe = census_data_aggregator.approximate_proportion(numerator, denominator)
+        proportion, moe = census_data_aggregator.approximate_proportion(
+            numerator,
+            denominator
+        )
 
         self.assertAlmostEqual(proportion, 0.322, places=3)
         self.assertAlmostEqual(moe, 0.008, places=3)

@@ -247,18 +247,16 @@ def approximate_proportion(numerator_pair, denominator_pair):
         https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html#document/p5
     """
     # Pull out the values
-    numerator_estimate, numerator_moe = numerator_pair
-    denominator_estimate, denominator_moe = denominator_pair
+    numerator_estimate, numerator_moe = map(float, numerator_pair)
+    denominator_estimate, denominator_moe = map(float, denominator_pair)
 
     # Approximate the proportion
-    proportion_estimate = 1.0 * (numerator_estimate / denominator_estimate)
+    proportion_estimate = numerator_estimate / denominator_estimate
 
     # Approximate the proportion MOE
     squared_proportion_moe = 1.0 * (
         numerator_moe**2 - proportion_estimate**2 * denominator_moe**2
-    ) / denominator_estimate
-
-    # Return the results
+    ) / denominator_estimate**2
     return (proportion_estimate, math.sqrt(squared_proportion_moe))
 
 
@@ -293,7 +291,7 @@ def approximate_ratio(numerator_pair, denominator_pair):
     # Approximate the ratio MOE
     squared_ratio_moe = 1.0 * (
         numerator_moe**2 + ratio_estimate**2 * denominator_moe**2
-    ) / denominator_estimate
+    ) / denominator_estimate**2
 
     return (ratio_estimate, math.sqrt(squared_ratio_moe))
 

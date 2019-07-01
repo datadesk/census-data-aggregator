@@ -238,6 +238,8 @@ def approximate_proportion(numerator_pair, denominator_pair):
         A two-item sequence containing with the proportion followed by its estimated
         margin of error.
 
+        (0.322, 0.008)
+
     Examples:
         The percentage of single women in suburban Virginia.
 
@@ -254,7 +256,7 @@ def approximate_proportion(numerator_pair, denominator_pair):
     # Approximate the proportion
     proportion_estimate = numerator_estimate / denominator_estimate
 
-    # Approximate the proportion MOE
+    # Approximate the margin of error
     squared_proportion_moe = numerator_moe**2 - (proportion_estimate**2 * denominator_moe**2)
     proportion_moe = (1.0 / denominator_estimate) * math.sqrt(squared_proportion_moe)
 
@@ -264,9 +266,9 @@ def approximate_proportion(numerator_pair, denominator_pair):
 
 def approximate_ratio(numerator_pair, denominator_pair):
     """
-    Calculates an estimate of the ratio and its approximate MOE for the
-    numerator and denominator arguments, where the numerator
-    does not represent a subset of the denominator.
+    Calculate the ratio between two estimates and approximate its margin of error.
+
+    Follows the U.S. Census Bureau's `official guidelines`_.
 
     Args:
         numerator (list): a two-item sequence with a U.S. Census
@@ -276,12 +278,16 @@ def approximate_ratio(numerator_pair, denominator_pair):
             bureau estimate and its margin of error.
 
     Returns:
-        A two-item sequence containing the approximated estimate and MOE.
+        A two-item sequence containing the ratio and its approximated margin of error.
 
-    Examples:
-        >>> approximate_ratio((379, 1), (384, 1))
         (0.9869791666666666, 0.07170047425884142)
 
+    Examples:
+        >>> approximate_ratio((203119, 5070), (203119, 5070))
+        (1.117, 0.039)
+
+    ... _official guidelines:
+        https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html#document/p7
     """
     # Pull out the values
     numerator_estimate, numerator_moe = numerator_pair
@@ -290,12 +296,12 @@ def approximate_ratio(numerator_pair, denominator_pair):
     # Approximate the ratio
     ratio_estimate = numerator_estimate / denominator_estimate
 
-    # Approximate the ratio MOE
-    squared_ratio_moe = (
-        numerator_moe**2 + ratio_estimate**2 * denominator_moe**2
-    ) / denominator_estimate**2
+    # Approximate the margin of error
+    squared_ratio_moe = numerator_moe**2 + (ratio_estimate**2 * denominator_moe**2)
+    ratio_moe = (1.0 / denominator_estimate) * math.sqrt(squared_ratio_moe)
 
-    return (ratio_estimate, math.sqrt(squared_ratio_moe))
+    # Return the result
+    return (ratio_estimate, ratio_moe)
 
 
 def approximate_product(pair_one, pair_two):

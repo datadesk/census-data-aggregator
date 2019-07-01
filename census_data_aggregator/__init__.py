@@ -247,8 +247,7 @@ def approximate_proportion(numerator_pair, denominator_pair):
     # Approximate the proportion MOE
     squared_proportion_moe = 1.0 * (
         numerator_moe**2 - proportion_estimate**2 * denominator_moe**2
-    ) / denominator_estimate
-
+    ) / denominator_estimate**2
     return (proportion_estimate, math.sqrt(squared_proportion_moe))
 
 
@@ -283,7 +282,7 @@ def approximate_ratio(numerator_pair, denominator_pair):
     # Approximate the ratio MOE
     squared_ratio_moe = 1.0 * (
         numerator_moe**2 + ratio_estimate**2 * denominator_moe**2
-    ) / denominator_estimate
+    ) / denominator_estimate**2
 
     return (ratio_estimate, math.sqrt(squared_ratio_moe))
 

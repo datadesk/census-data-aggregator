@@ -108,7 +108,7 @@ If a design factor is not provided, no margin of error will be returned.
 ```
 
 
-### Approximating ratios
+#### Approximating ratios
 
 Calculate the ratio between two estimates and approximate its margin of error. Follows the bureau's [ACS handbook](https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html).
 
@@ -123,7 +123,7 @@ Calculate the ratio between two estimates and approximate its margin of error. F
 ```
 
 
-### Approximating products
+#### Approximating products
 
 Calculates the product of two estimates and approximates its margin of error. Follows the bureau's [ACS handbook](https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html).
 

@@ -288,7 +288,7 @@ def approximate_ratio(numerator_pair, denominator_pair):
         (0.9869791666666666, 0.07170047425884142)
 
     Examples:
-        >>> approximate_ratio((203119, 5070), (203119, 5070))
+        >>> approximate_ratio((226840, 5556), (203119, 5070))
         (1.117, 0.039)
 
     ... _official guidelines:

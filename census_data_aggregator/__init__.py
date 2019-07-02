@@ -348,10 +348,11 @@ def approximate_product(pair_one, pair_two):
     # Return the results
     return product_estimate, product_moe
 
+
 def approximate_percentchange(pair_one, pair_two):
     """
     Calculates the percent change between two estimates and approximates its margin of error.
-    
+
     Multiplies results by 100.
 
     Follows the U.S. Census Bureau's `official guidelines`_.
@@ -366,15 +367,15 @@ def approximate_percentchange(pair_one, pair_two):
     Returns:
         A two-item sequence containing the estimate and its approximate margin of error.
 
-		(61393366, 202289)
-		
+                (61393366, 202289)
+
     Examples:
-    
-    	>>> approximate_percentchange((135173, 3860), (139301, 4047))
+
+        >>> approximate_percentchange((135173, 3860), (139301, 4047))
         (-2.963367097149338, 3.95294796457092)
 
         2017 value from: https://www.fairfaxcounty.gov/demographics/sites/demographics/files/assets/acs/acs2017.pdf
-    
+
     ... _official guidelines:
         https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html#document/p8
     """
@@ -392,5 +393,3 @@ def approximate_percentchange(pair_one, pair_two):
 
     # Return the results
     return percent_change_estimate, percent_change_moe
-
-    

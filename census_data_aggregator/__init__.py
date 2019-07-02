@@ -369,8 +369,12 @@ def approximate_percentchange(pair_one, pair_two):
 		(61393366, 202289)
 		
     Examples:
-        
+    
+    	>>> approximate_percentchange((135173, 3860), (139301, 4047))
+        (-2.963367097149338, 3.95294796457092)
 
+        2017 value from: https://www.fairfaxcounty.gov/demographics/sites/demographics/files/assets/acs/acs2017.pdf
+    
     ... _official guidelines:
         https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html#document/p8
     """
@@ -383,7 +387,7 @@ def approximate_percentchange(pair_one, pair_two):
 
     # Approximate the margin of error
     percent_change_as_ratio = approximate_ratio(pair_one, pair_two)
-    estimate, decimal_change_moe = percent_change_as_ratio
+    decimal_change_moe = percent_change_as_ratio[1]
     percent_change_moe = 100 * decimal_change_moe
 
     # Return the results

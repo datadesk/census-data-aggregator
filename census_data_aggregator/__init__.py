@@ -349,7 +349,7 @@ def approximate_product(pair_one, pair_two):
     return product_estimate, product_moe
 
 
-def approximate_percentchange(pair_one, pair_two):
+def approximate_percentchange(pair_old, pair_new):
     """
     Calculates the percent change between two estimates and approximates its margin of error.
 
@@ -358,10 +358,10 @@ def approximate_percentchange(pair_one, pair_two):
     Follows the U.S. Census Bureau's `official guidelines`_.
 
     Args:
-        pair_one (list): a two-item sequence with a U.S. Census
+        pair_old (list): a two-item sequence with an earlier U.S. Census
             bureau estimate and its margin of error.
 
-        pair_two (list): a two-item sequence with a U.S. Census
+        pair_new (list): a two-item sequence with a later U.S. Census
             bureau estimate and its margin of error.
 
     Returns:
@@ -372,7 +372,7 @@ def approximate_percentchange(pair_one, pair_two):
     Examples:
 
         >>> approximate_percentchange((135173, 3860), (139301, 4047))
-        (-2.963367097149338, 3.95294796457092)
+        (3.0538643072211165, 4.198069852261231)
 
         2017 value from: https://www.fairfaxcounty.gov/demographics/sites/demographics/files/assets/acs/acs2017.pdf
 
@@ -380,14 +380,14 @@ def approximate_percentchange(pair_one, pair_two):
         https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html#document/p8
     """
     # Pull out the values
-    estimate_one, moe_one = pair_one
-    estimate_two, moe_two = pair_two
+    estimate_old, moe_old = pair_old
+    estimate_new, moe_new = pair_new
 
     # Approximate the percent change
-    percent_change_estimate = ((estimate_one - estimate_two) / estimate_two) * 100
+    percent_change_estimate = ((estimate_new - estimate_old) / estimate_old) * 100
 
     # Approximate the margin of error
-    percent_change_as_ratio = approximate_ratio(pair_one, pair_two)
+    percent_change_as_ratio = approximate_ratio(pair_new, pair_old)
     decimal_change_moe = percent_change_as_ratio[1]
     percent_change_moe = 100 * decimal_change_moe
 

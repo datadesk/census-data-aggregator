@@ -8,10 +8,11 @@ Features
 ^^^^^^^^
 
 * Approximating sums
-* Approximating proportions
 * Approximating medians
-* Approximating ratios
+* Approximating percent change
 * Approximating products
+* Approximating proportions
+* Approximating ratios
 
 
 Installation
@@ -48,24 +49,6 @@ Accepts an open-ended set of paired lists, each expected to provide an estimate 
       (females_under_5, females_under_5_moe)
   )
   19866960, 5437.757350231803
-
-
-Approximating proportions
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Calculate an estimate's proportion of another estimate and approximate the margin of error. Follows the bureau's `ACS handbook <https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html>`_. Simply multiply the result by 100 for a percentage. Recommended when the first value is smaller than the second.
-
-Accepts two paired lists, each expected to provide an estimate followed by its margin of error. The numerator goes in first. The denominator goes in second. In cases where the numerator is not a subset of the denominator, the bureau recommends using the approximate_ratio method instead.
-
-.. code-block:: python
-
-   >>> single_women_in_virginia = 203119, 5070
-   >>> total_women_in_virginia = 690746, 831
-   >>> census_data_aggregator.approximate_proportion(
-       single_women_in_virginia,
-       total_women_in_virginia
-   )
-   0.322, 0.008
 
 
 Approximating medians
@@ -125,22 +108,25 @@ If a design factor is not provided, no margin of error will be returned.
   >>> census_data_aggregator.approximate_median(income)
   42211.096153846156, None
 
-Approximating ratios
-~~~~~~~~~~~~~~~~~~~~
 
-Calculate the ratio between two estimates and approximate its margin of error. Follows the bureau's `ACS handbook <https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html>`_.
+Approximating percent change
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Accepts two paired lists, each expected to provide an estimate followed by its margin of error. The numerator goes in first. The denominator goes in second. In cases where the numerator is a subset of the denominator, the bureau recommends uses the approximate_proportion method.
+Calculates the percent change between two estimates and approximates its margin of error. Follows the bureau's `ACS handbook <https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html>`_.
+
+Accepts two paired lists, each expected to provide an estimate followed by its margin of error. The first input should be the earlier estimate in the comparison. The second input should be the later estimate.
+
+Returns both values as percentages multiplied by 100.
 
 .. code-block:: python
 
-  >>> single_men_in_virginia = 226840, 5556
-  >>> single_women_in_virginia = 203119, 5070
-  >>> census_data_aggregator.approximate_ratio(
-      single_men_in_virginia,
-      single_women_in_virginia
-  )
-  1.117, 0.039
+    >>> single_women_in_fairfax_before = 135173, 3860
+    >>> single_women_in_fairfax_after = 139301, 4047
+    >>> census_data_aggregator.approximate_percentchange(
+      single_women_in_fairfax_before,
+      single_women_in_fairfax_after
+    )
+    3.0538643072211165, 4.198069852261231
 
 
 Approximating products
@@ -159,6 +145,42 @@ Accepts two paired lists, each expected to provide an estimate followed by its m
        single_family_percent
    )
    61393366, 202289
+
+
+Approximating proportions
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Calculate an estimate's proportion of another estimate and approximate the margin of error. Follows the bureau's `ACS handbook <https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html>`_. Simply multiply the result by 100 for a percentage. Recommended when the first value is smaller than the second.
+
+Accepts two paired lists, each expected to provide an estimate followed by its margin of error. The numerator goes in first. The denominator goes in second. In cases where the numerator is not a subset of the denominator, the bureau recommends using the approximate_ratio method instead.
+
+.. code-block:: python
+
+  >>> single_women_in_virginia = 203119, 5070
+  >>> total_women_in_virginia = 690746, 831
+  >>> census_data_aggregator.approximate_proportion(
+      single_women_in_virginia,
+      total_women_in_virginia
+  )
+  0.322, 0.008
+
+
+Approximating ratios
+~~~~~~~~~~~~~~~~~~~~
+
+Calculate the ratio between two estimates and approximate its margin of error. Follows the bureau's `ACS handbook <https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html>`_.
+
+Accepts two paired lists, each expected to provide an estimate followed by its margin of error. The numerator goes in first. The denominator goes in second. In cases where the numerator is a subset of the denominator, the bureau recommends uses the approximate_proportion method.
+
+.. code-block:: python
+
+  >>> single_men_in_virginia = 226840, 5556
+  >>> single_women_in_virginia = 203119, 5070
+  >>> census_data_aggregator.approximate_ratio(
+      single_men_in_virginia,
+      single_women_in_virginia
+  )
+  1.117, 0.039
 
 
 A note from the experts

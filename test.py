@@ -3,7 +3,10 @@
 import doctest
 import unittest
 import census_data_aggregator
-from census_data_aggregator.exceptions import DesignFactorWarning, DataError
+from census_data_aggregator.exceptions import (
+    DesignFactorWarning,
+    DataError
+)
 
 
 class CensusErrorAnalyzerTest(unittest.TestCase):
@@ -84,6 +87,14 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             dict(min=200000, max=250001, n=5000)
         ]
         census_data_aggregator.approximate_median(top_median, design_factor=1.5)
+
+    def test_percentchange(self):
+        estimate, moe = census_data_aggregator.approximate_percentchange(
+            (135173, 3860),
+            (139301, 4047)
+        )
+        self.assertAlmostEqual(estimate, 3.0538643072211165)
+        self.assertAlmostEqual(moe, 4.198069852261231)
 
     def test_exception(self):
         DesignFactorWarning().__str__()

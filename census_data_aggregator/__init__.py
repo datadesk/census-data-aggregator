@@ -370,14 +370,16 @@ def approximate_percentchange(pair_old, pair_new):
                 (61393366, 202289)
 
     Examples:
+        The change of percentage of single women in suburban Virginia,
+        taken from the bureau's official example as well as data `gathered elsewhere`_.
 
         >>> approximate_percentchange((135173, 3860), (139301, 4047))
         (3.0538643072211165, 4.198069852261231)
 
-        2017 value from: https://www.fairfaxcounty.gov/demographics/sites/demographics/files/assets/acs/acs2017.pdf
-
     ... _official guidelines:
         https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html#document/p8
+    ... _gathered elsewhere:
+        https://www.fairfaxcounty.gov/demographics/sites/demographics/files/assets/acs/acs2017.pdf
     """
     # Pull out the values
     estimate_old, moe_old = pair_old

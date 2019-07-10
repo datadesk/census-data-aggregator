@@ -83,7 +83,7 @@ def approximate_median(range_list, design_factor=None):
     Returns:
         A two-item tuple with the median followed by the approximated margin of error.
 
-        (42211.096153846156, 27260.315546093672)
+        (42211.096153846156, 10153.200960954948)
 
     Examples:
         Estimating the median for a range of median household incomes.
@@ -107,7 +107,7 @@ def approximate_median(range_list, design_factor=None):
             dict(min=200000, max=250001, n=18)
         ]
         >>> approximate_median(income, design_factor=1.5)
-        (42211.096153846156, 27260.315546093672)
+        (42211.096153846156, 10153.200960954948)
 
     ... _official guidelines:
         https://www.documentcloud.org/documents/6165603-2013-2017AccuracyPUMS.html#document/p18
@@ -154,7 +154,7 @@ def approximate_median(range_list, design_factor=None):
         return estimated_median, None
 
     # Get the standard error for this dataset
-    standard_error = (design_factor * math.sqrt((99 / n) * (50**2))) / 100
+    standard_error = (design_factor * math.sqrt((95 / (5 * n)) * (50**2))) / 100
 
     # Use the standard error to calculate the p values
     p_lower = (.5 - standard_error)

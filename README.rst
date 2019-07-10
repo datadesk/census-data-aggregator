@@ -99,7 +99,7 @@ For a margin of error to be returned, a "design factor" must be provided to calc
 .. code-block:: python
 
   >>> census_data_aggregator.approximate_median(income, design_factor=1.5)
-  42211.096153846156, 27260.315546093672
+  42211.096153846156, 10153.200960954948
 
 If a design factor is not provided, no margin of error will be returned.
 

@@ -9,7 +9,7 @@ def read(fname):
 
 setup(
     name='census-data-aggregator',
-    version='0.0.4',
+    version='0.0.5',
     description="Combine U.S. census data responsibly",
     long_description=read('README.rst'),
     author='Los Angeles Times Data Desk',

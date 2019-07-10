@@ -98,7 +98,7 @@ For a margin of error to be returned, a "design factor" and sampling percentage 
 For the sampling percentage value, the 1-year ACS is designed to be a 2.5% sample of the population, and the 1-year PUMS is designed to be a 1% sample of the population. You can multiply these percentages by 5 for the 5-year versions.
 .. code-block:: python
 
-  >>> census_data_aggregator.approximate_median(income, design_factor=1.5)
+  >>> census_data_aggregator.approximate_median(income, design_factor=1.5, sampling_percentage=1)
   42211.096153846156, 10153.200960954948
 
 If a design factor and/or sampling percentage is not provided, no margin of error will be returned.

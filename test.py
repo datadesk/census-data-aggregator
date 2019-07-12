@@ -4,7 +4,6 @@ import doctest
 import unittest
 import census_data_aggregator
 from census_data_aggregator.exceptions import (
-    DesignFactorWarning,
     DataError,
     SamplingPercentageWarning
 )
@@ -44,7 +43,7 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
         )
 
     def test_median(self):
-        income = [
+        household_income_2013_acs5 = [
             dict(min=2499, max=9999, n=186),
             dict(min=10000, max=14999, n=78),
             dict(min=15000, max=19999, n=98),
@@ -61,22 +60,14 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             dict(min=125000, max=149999, n=100),
             dict(min=150000, max=199999, n=58),
             dict(min=200000, max=250001, n=18)
-        ]
+        ] 
         self.assertEqual(
-            census_data_aggregator.approximate_median(income, design_factor=1.5, sampling_percentage=1),
-            (42211.096153846156, 27260.315546093672)
+            census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=2.5*5),
+            (42211.096153846156, 4706.522752733644)
         )
-
-        with self.assertWarns(DesignFactorWarning):
-            m, moe = census_data_aggregator.approximate_median(income)
-            self.assertTrue(moe == None)
- 
-        with self.assertWarns(DesignFactorWarning):
-            m, moe = census_data_aggregator.approximate_median(income, sampling_percentage=1)
-            self.assertTrue(moe == None)
         
         with self.assertWarns(SamplingPercentageWarning):
-            m, moe = census_data_aggregator.approximate_median(income, design_factor=1.5)
+            m, moe = census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1.5)
             self.assertTrue(moe == None)    
         # Test a sample size so small the p values fail
         with self.assertRaises(DataError):
@@ -103,9 +94,6 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
         )
         self.assertAlmostEqual(estimate, 3.0538643072211165)
         self.assertAlmostEqual(moe, 4.198069852261231)
-
-    def test_exception(self):
-        DesignFactorWarning().__str__()
 
     def test_sum_ch8(self):
         # Never-married female characteristics from Table 8.1

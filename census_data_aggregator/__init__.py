@@ -3,7 +3,7 @@
 from __future__ import division
 import math
 import warnings
-from .exceptions import DesignFactorWarning, DataError, SamplingPercentageWarning
+from .exceptions import DataError, SamplingPercentageWarning
 
 
 def approximate_sum(*pairs):
@@ -76,12 +76,12 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
             The minimum value in the first range and the maximum value in the last range can be tailored to the dataset
             by using the "jam values" provided in the `American Community Survey's technical documentation`_.
         design_factor (float, optional): A statistical input used to tailor the standard error to the
-            variance of the dataset. This is only needed for data coming from PUMS. The Census Bureau publishes design factors as 
+            variance of the dataset. This is only needed for data coming from PUMS. The Census Bureau publishes design factors as
             part of its PUMS Accuracy statement.
             Find the value for the dataset you are estimating by referring to `the bureau's reference material`_.
             If you do not provide this input, the default is one which will have no effect on the margin of error.
-        sampling_percentage (float, optional): A statistical input used to correct variance for finite population. This value 
-            represents the percentage of the population that was sampled to create the data. If you do not provide this input, a 
+        sampling_percentage (float, optional): A statistical input used to correct variance for finite population. This value
+            represents the percentage of the population that was sampled to create the data. If you do not provide this input, a
             margin of error will not be returned.
 
     Returns:
@@ -91,7 +91,7 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
 
     Examples:
         Estimating the median for a range of household incomes.
-        
+
         >>> household_income_2013_acs5 = [
             dict(min=2499, max=9999, n=186),
             dict(min=10000, max=14999, n=78),
@@ -109,8 +109,8 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
             dict(min=125000, max=149999, n=100),
             dict(min=150000, max=199999, n=58),
             dict(min=200000, max=250001, n=18)
-        ] 
-        
+        ]
+
         >>> approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5)
         (42211.096153846156, 4706.522752733644)
 
@@ -151,12 +151,6 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
 
     # Estimate the median
     estimated_median = n_midpoint_range['min'] + n_midrange_gap_adjusted
-
-    # If there's no design factor, we can't calculate a margin of error
-    if not design_factor:
-        # Let's throw a warning, but still return the median
-        warnings.warn("", DesignFactorWarning)
-        return estimated_median, None
 
     # If there's no sampling percentage, we can't calculate a margin of error
     if not sampling_percentage:

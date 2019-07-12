@@ -60,7 +60,7 @@ def approximate_sum(*pairs):
     return total, margin_of_error
 
 
-def approximate_median(range_list, design_factor=None, sampling_percentage=None):
+def approximate_median(range_list, design_factor=1, sampling_percentage=None):
     """
     Estimate a median and approximate the margin of error.
 
@@ -76,12 +76,15 @@ def approximate_median(range_list, design_factor=None, sampling_percentage=None)
             The minimum value in the first range and the maximum value in the last range can be tailored to the dataset
             by using the "jam values" provided in the `American Community Survey's technical documentation`_.
         design_factor (float, optional): A statistical input used to tailor the standard error to the
-            variance of the dataset. The Census Bureau publishes design factors as part of its PUMS Accuracy statement.
+            variance of the dataset. This is only needed for data coming from PUMS. The Census Bureau publishes design factors as 
+            part of its PUMS Accuracy statement.
             Find the value for the dataset you are estimating by referring to `the bureau's reference material`_.
-            If you do not provide this input, a margin of error will not be returned.
-        sampling_percentage (float, optional): A statistical input used to correct variance for finite population.
-            For example, the 1-year ACS is designed to be a 2.5% sample of the population, and the 1-year PUMS is
-            designed to be a 1% sample of the population. You can multiply these percentages by 5 for the 5-year versions.
+            If you do not provide this input, the default is one which will have no effect on the margin of error.
+        sampling_percentage (float, optional): A statistical input used to correct variance for finite population. This value 
+            represents the percentage of the population that was sampled to create the data. If you do not provide this input, a 
+            margin of error will not be returned.
+
+            
 
     Returns:
         A two-item tuple with the median followed by the approximated margin of error.

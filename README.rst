@@ -132,7 +132,7 @@ The minimum value in the first range and the maximum value in the last range can
       dict(min=200000, max=250001, n=211613)
   ] 
 
-For a margin of error to be returned, a sampling percentage must be provided to calculate the standard error. The sampling percentage represents what proportion of the population was sampled and is used to correct for a finite sample. For the sampling percentage value, the 1-year ACS is designed to be a 2.5% sample of the population, and the 1-year PUMS is designed to be a 1% sample of the population. You can multiply these percentages by 5 for the 5-year versions. Additionally, if the data comes from PUMS, a "design factor" must also be provided. The design factor is a statistical input used to tailor the estimate to the variance of the dataset. The Census Bureau publishes design factors as part of its PUMS Accuracy statement. Find the value for the dataset you are estimating by referring to `the bureau's reference material <https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html>`_. 
+For a margin of error to be returned, a sampling percentage must be provided to calculate the standard error. The sampling percentage represents what proportion of the population was sampled and is used to correct for a finite sample. For the sampling percentage value, the 1-year ACS is designed to be a 2.5% sample of the population, and the 1-year PUMS is designed to be a 1% sample of the population. You can multiply these percentages by the number of years to obtain the final sampling percentatge. Additionally, if the data comes from PUMS, a "design factor" must also be provided. The design factor is a statistical input used to tailor the estimate to the variance of the dataset. The Census Bureau publishes design factors as part of its PUMS Accuracy statement. Find the value for the dataset you are estimating by referring to `the bureau's reference material <https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html>`_. 
 
 If a sampling percentage is not provided, no margin of error will be returned. A default value of one is used for the design factor, which will not impact the margin of error. If the data is from PUMS, this default should be replaced.
 
@@ -141,7 +141,7 @@ If a sampling percentage is not provided, no margin of error will be returned. A
   >>> census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs1)
   42211.096153846156, None
 
-As the sampling percentage increases, the margin of error decreases.
+The 1-year ACS is designed to sample 2.5% of the population. Therefore, the 3-year ACS samples 3*2.5% of the population, and the 5-year ACS samples 5*2.5% of the population. As the sampling percentage increases, the margin of error decreases. Similarly, since the 1-year PUMS is designed to sample 1% of the population, the 5-year PUMS samples 5*1% of the population.
 
 .. code-block:: python
 

@@ -84,17 +84,15 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
             represents the percentage of the population that was sampled to create the data. If you do not provide this input, a 
             margin of error will not be returned.
 
-            
-
     Returns:
         A two-item tuple with the median followed by the approximated margin of error.
 
         (42211.096153846156, 10153.200960954948)
 
     Examples:
-        Estimating the median for a range of median household incomes.
-
-        >>> income = [
+        Estimating the median for a range of household incomes.
+        
+        >>> household_income_2013_acs5 = [
             dict(min=2499, max=9999, n=186),
             dict(min=10000, max=14999, n=78),
             dict(min=15000, max=19999, n=98),
@@ -111,9 +109,10 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
             dict(min=125000, max=149999, n=100),
             dict(min=150000, max=199999, n=58),
             dict(min=200000, max=250001, n=18)
-        ]
-        >>> approximate_median(income, design_factor=1.5, sampling_percentage=1)
-        (42211.096153846156, 10153.200960954948)
+        ] 
+        
+        >>> approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5)
+        (42211.096153846156, 4706.522752733644)
 
     ... _official guidelines:
         https://www.documentcloud.org/documents/6165603-2013-2017AccuracyPUMS.html#document/p18

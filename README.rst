@@ -145,7 +145,9 @@ If a sampling percentage is not provided, no margin of error will be returned. A
 
   >>> census_data_aggregator.approximate_median(household_income_2013_acs1)
   42211.096153846156, None
-  
+
+As the sampling percentage increases, the margin of error decreases.
+
 .. code-block:: python
 
   >>> approximate_median(household_income_2013_acs1, design_factor=1, sampling_percentage=1*2.5)
@@ -157,7 +159,7 @@ If a sampling percentage is not provided, no margin of error will be returned. A
   >>> approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5)
   (42211.096153846156, 4706.522752733644)
 
-As the sampling percentage increases, the margin of error decreases.
+
 
 Approximating percent change
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

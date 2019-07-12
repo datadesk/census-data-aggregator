@@ -75,89 +75,84 @@ The minimum value in the first range and the maximum value in the last range can
   
 .. code-block:: python
 
-  >>> household_income_2013_acs1 = [
-      dict(min=2499, max=9999, n=186),
-      dict(min=10000, max=14999, n=78),
-      dict(min=15000, max=19999, n=98),
-      dict(min=20000, max=24999, n=287),
-      dict(min=25000, max=29999, n=142),
-      dict(min=30000, max=34999, n=90),
-      dict(min=35000, max=39999, n=107),
-      dict(min=40000, max=44999, n=104),
-      dict(min=45000, max=49999, n=178),
-      dict(min=50000, max=59999, n=106),
-      dict(min=60000, max=74999, n=177),
-      dict(min=75000, max=99999, n=262),
-      dict(min=100000, max=124999, n=77),
-      dict(min=125000, max=149999, n=100),
-      dict(min=150000, max=199999, n=58),
-      dict(min=200000, max=250001, n=18)
+  >>> household_income_Los_Angeles_County_2013_acs1 = [
+      dict(min=2499, max=9999, n=1382),
+      dict(min=10000, max=14999, n=2377),
+      dict(min=15000, max=19999, n=1332),
+      dict(min=20000, max=24999, n=3129),
+      dict(min=25000, max=29999, n=1927),
+      dict(min=30000, max=34999, n=1825),
+      dict(min=35000, max=39999, n=1567),
+      dict(min=40000, max=44999, n=1996),
+      dict(min=45000, max=49999, n=1757),
+      dict(min=50000, max=59999, n=3523),
+      dict(min=60000, max=74999, n=4360),
+      dict(min=75000, max=99999, n=6424),
+      dict(min=100000, max=124999, n=5257),
+      dict(min=125000, max=149999, n=3485),
+      dict(min=150000, max=199999, n=2926),
+      dict(min=200000, max=250001, n=4215)
   ] 
   
-    >>> household_income_2013_acs3 = [
-      dict(min=2499, max=9999, n=186),
-      dict(min=10000, max=14999, n=78),
-      dict(min=15000, max=19999, n=98),
-      dict(min=20000, max=24999, n=287),
-      dict(min=25000, max=29999, n=142),
-      dict(min=30000, max=34999, n=90),
-      dict(min=35000, max=39999, n=107),
-      dict(min=40000, max=44999, n=104),
-      dict(min=45000, max=49999, n=178),
-      dict(min=50000, max=59999, n=106),
-      dict(min=60000, max=74999, n=177),
-      dict(min=75000, max=99999, n=262),
-      dict(min=100000, max=124999, n=77),
-      dict(min=125000, max=149999, n=100),
-      dict(min=150000, max=199999, n=58),
-      dict(min=200000, max=250001, n=18)
+    >>> household_income_Los_Angeles_County_2013_acs3 = [
+      dict(min=2499, max=9999, n=222966),
+      dict(min=10000, max=14999, n=197354),
+      dict(min=15000, max=19999, n=178836),
+      dict(min=20000, max=24999, n=177895),
+      dict(min=25000, max=29999, n=155399),
+      dict(min=30000, max=34999, n=156869),
+      dict(min=35000, max=39999, n=145396),
+      dict(min=40000, max=44999, n=141772),
+      dict(min=45000, max=49999, n=125984),
+      dict(min=50000, max=59999, n=237511),
+      dict(min=60000, max=74999, n=303531),
+      dict(min=75000, max=99999, n=371986),
+      dict(min=100000, max=124999, n=264049),
+      dict(min=125000, max=149999, n=164391),
+      dict(min=150000, max=199999, n=179788),
+      dict(min=200000, max=250001, n=209815)
   ] 
     
-  >>> household_income_2013_acs5 = [
-      dict(min=2499, max=9999, n=186),
-      dict(min=10000, max=14999, n=78),
-      dict(min=15000, max=19999, n=98),
-      dict(min=20000, max=24999, n=287),
-      dict(min=25000, max=29999, n=142),
-      dict(min=30000, max=34999, n=90),
-      dict(min=35000, max=39999, n=107),
-      dict(min=40000, max=44999, n=104),
-      dict(min=45000, max=49999, n=178),
-      dict(min=50000, max=59999, n=106),
-      dict(min=60000, max=74999, n=177),
-      dict(min=75000, max=99999, n=262),
-      dict(min=100000, max=124999, n=77),
-      dict(min=125000, max=149999, n=100),
-      dict(min=150000, max=199999, n=58),
-      dict(min=200000, max=250001, n=18)
-  ]  
+  >>> household_income_Los_Angeles_County_2013_acs5 = [
+      dict(min=2499, max=9999, n=209050),
+      dict(min=10000, max=14999, n=190300),
+      dict(min=15000, max=19999, n=173380),
+      dict(min=20000, max=24999, n=167740),
+      dict(min=25000, max=29999, n=154347),
+      dict(min=30000, max=34999, n=155834),
+      dict(min=35000, max=39999, n=143103),
+      dict(min=40000, max=44999, n=140946),
+      dict(min=45000, max=49999, n=126807),
+      dict(min=50000, max=59999, n=241482),
+      dict(min=60000, max=74999, n=303887),
+      dict(min=75000, max=99999, n=384881),
+      dict(min=100000, max=124999, n=268689),
+      dict(min=125000, max=149999, n=169129),
+      dict(min=150000, max=199999, n=189195),
+      dict(min=200000, max=250001, n=211613)
+  ] 
 
 For a margin of error to be returned, a sampling percentage must be provided to calculate the standard error. The sampling percentage represents what proportion of the population was sampled and is used to correct for a finite sample. For the sampling percentage value, the 1-year ACS is designed to be a 2.5% sample of the population, and the 1-year PUMS is designed to be a 1% sample of the population. You can multiply these percentages by 5 for the 5-year versions. Additionally, if the data comes from PUMS, a "design factor" must also be provided. The design factor is a statistical input used to tailor the estimate to the variance of the dataset. The Census Bureau publishes design factors as part of its PUMS Accuracy statement. Find the value for the dataset you are estimating by referring to `the bureau's reference material <https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html>`_. 
-
-.. code-block:: python
-
-  >>> census_data_aggregator.approximate_median(income, design_factor=1.5, sampling_percentage=1)
-  42211.096153846156, 10153.200960954948
 
 If a sampling percentage is not provided, no margin of error will be returned. A default value of one is used for the design factor, which will not impact the margin of error. If the data is from PUMS, this default should be replaced.
 
 .. code-block:: python
 
-  >>> census_data_aggregator.approximate_median(household_income_2013_acs1)
+  >>> census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs1)
   42211.096153846156, None
 
 As the sampling percentage increases, the margin of error decreases.
 
 .. code-block:: python
 
-  >>> approximate_median(household_income_2013_acs1, design_factor=1, sampling_percentage=1*2.5)
-  (42211.096153846156, 9742.733275658788)
+  >>> approximate_median(household_income_Los_Angeles_County_2013_acs1, design_factor=1, sampling_percentage=1*2.5)
+  (54811.92744757085, 388.8872772535171)
   
-  >>> approximate_median(household_income_2013_acs3, design_factor=1, sampling_percentage=3*2.5)
-  (42211.096153846156, 5918.451215485291)
+  >>> approximate_median(household_income_Los_Angeles_County_2013_acs3, design_factor=1, sampling_percentage=3*2.5)
+  (54811.92744757085, 218.6913805834877)
 
-  >>> approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5)
-  (42211.096153846156, 4706.522752733644)
+  >>> approximate_median(household_income_Los_Angeles_County_2013_acs5, design_factor=1, sampling_percentage=5*2.5)
+  (56363.58534176461, 161.96723586588095)
 
 
 

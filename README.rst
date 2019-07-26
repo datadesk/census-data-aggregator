@@ -54,7 +54,7 @@ Accepts an open-ended set of paired lists, each expected to provide an estimate 
 Approximating medians
 ~~~~~~~~~~~~~~~~~~~~~
 
-Estimate a median and approximate the margin of error. Follows the U.S. Census Bureau's official guidelines for estimation using a design factor for data from PUMS. Useful for generating medians for measures like household income and age when aggregating census geographies.
+Estimate a median and approximate the margin of error. Follows the U.S. Census Bureau's official guidelines for estimation. Useful for generating medians for measures like household income and age when aggregating census geographies.
 
 Expects a list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have three keys:
 
@@ -72,10 +72,10 @@ Expects a list of dictionaries that divide the full range of data values into co
 
 
 The minimum value in the first range and the maximum value in the last range can be tailored to the dataset by using the "jam values" provided in the `American Community Survey's technical documentation <https://www.documentcloud.org/documents/6165752-2017-SummaryFile-Tech-Doc.html#document/p20/a508561>`_.
-  
+
 .. code-block:: python
 
-  >>> household_income_Los_Angeles_County_2013_acs1 = [
+  >>> household_income_la_2013_acs1 = [
       dict(min=2499, max=9999, n=1382),
       dict(min=10000, max=14999, n=2377),
       dict(min=15000, max=19999, n=1332),
@@ -92,68 +92,37 @@ The minimum value in the first range and the maximum value in the last range can
       dict(min=125000, max=149999, n=3485),
       dict(min=150000, max=199999, n=2926),
       dict(min=200000, max=250001, n=4215)
-  ] 
-  
-    >>> household_income_Los_Angeles_County_2013_acs3 = [
-      dict(min=2499, max=9999, n=222966),
-      dict(min=10000, max=14999, n=197354),
-      dict(min=15000, max=19999, n=178836),
-      dict(min=20000, max=24999, n=177895),
-      dict(min=25000, max=29999, n=155399),
-      dict(min=30000, max=34999, n=156869),
-      dict(min=35000, max=39999, n=145396),
-      dict(min=40000, max=44999, n=141772),
-      dict(min=45000, max=49999, n=125984),
-      dict(min=50000, max=59999, n=237511),
-      dict(min=60000, max=74999, n=303531),
-      dict(min=75000, max=99999, n=371986),
-      dict(min=100000, max=124999, n=264049),
-      dict(min=125000, max=149999, n=164391),
-      dict(min=150000, max=199999, n=179788),
-      dict(min=200000, max=250001, n=209815)
-  ] 
-    
-  >>> household_income_Los_Angeles_County_2013_acs5 = [
-      dict(min=2499, max=9999, n=209050),
-      dict(min=10000, max=14999, n=190300),
-      dict(min=15000, max=19999, n=173380),
-      dict(min=20000, max=24999, n=167740),
-      dict(min=25000, max=29999, n=154347),
-      dict(min=30000, max=34999, n=155834),
-      dict(min=35000, max=39999, n=143103),
-      dict(min=40000, max=44999, n=140946),
-      dict(min=45000, max=49999, n=126807),
-      dict(min=50000, max=59999, n=241482),
-      dict(min=60000, max=74999, n=303887),
-      dict(min=75000, max=99999, n=384881),
-      dict(min=100000, max=124999, n=268689),
-      dict(min=125000, max=149999, n=169129),
-      dict(min=150000, max=199999, n=189195),
-      dict(min=200000, max=250001, n=211613)
-  ] 
+  ]
 
-For a margin of error to be returned, a sampling percentage must be provided to calculate the standard error. The sampling percentage represents what proportion of the population was sampled and is used to correct for a finite sample. For the sampling percentage value, the 1-year ACS is designed to be a 2.5% sample of the population, and the 1-year PUMS is designed to be a 1% sample of the population. You can multiply these percentages by the number of years to obtain the final sampling percentatge. Additionally, if the data comes from PUMS, a "design factor" must also be provided. The design factor is a statistical input used to tailor the estimate to the variance of the dataset. The Census Bureau publishes design factors as part of its PUMS Accuracy statement. Find the value for the dataset you are estimating by referring to `the bureau's reference material <https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html>`_. 
+For a margin of error to be returned, a sampling percentage must be provided to calculate the standard error. The sampling percentage represents what proportion of the population that participated in the survey. Here are the values for some common census surveys.
 
-If a sampling percentage is not provided, no margin of error will be returned. A default value of one is used for the design factor, which will not impact the margin of error. If the data is from PUMS, this default should be replaced.
+.. list-table::
+  :header-rows: 1
+
+  * - survey
+    - samping percentage
+  * - One-year PUMS
+    - 1
+  * - One-year ACS
+    - 2.5
+  * - Three-year ACS
+    - 7.5
+  * - Five-year ACS
+    - 12.5
+
+.. code-block:: python
+
+    >>> census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs1, sampling_percentage=2.5)
+    54811.92744757085, 388.8872772535171
+
+If you do not provide the value to the function, no margin of error will be returned.
 
 .. code-block:: python
 
   >>> census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs1)
   42211.096153846156, None
 
-The 1-year ACS is designed to sample 2.5% of the population. Therefore, the 3-year ACS samples 3*2.5% of the population, and the 5-year ACS samples 5*2.5% of the population. As the sampling percentage increases, the margin of error decreases. Similarly, since the 1-year PUMS is designed to sample 1% of the population, the 5-year PUMS samples 5*1% of the population.
-
-.. code-block:: python
-
-  >>> approximate_median(household_income_Los_Angeles_County_2013_acs1, design_factor=1, sampling_percentage=1*2.5)
-  (54811.92744757085, 388.8872772535171)
-  
-  >>> approximate_median(household_income_Los_Angeles_County_2013_acs3, design_factor=1, sampling_percentage=3*2.5)
-  (54811.92744757085, 218.6913805834877)
-
-  >>> approximate_median(household_income_Los_Angeles_County_2013_acs5, design_factor=1, sampling_percentage=5*2.5)
-  (56363.58534176461, 161.96723586588095)
-
+If the data being approximated comes from PUMS, a additional design factor must also be provided. The design factor is a statistical input used to tailor the estimate to the variance of the dataset. Find the value for the dataset you are estimating by referring to `the bureau's reference material <https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html>`_.
 
 
 Approximating percent change

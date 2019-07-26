@@ -73,16 +73,20 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
                 * min (int): The minimum value of the range
                 * max (int): The maximum value of the range
                 * n (int): The number of people, households or other unit in the range
-            The minimum value in the first range and the maximum value in the last range can be tailored to the dataset
-            by using the "jam values" provided in the `American Community Survey's technical documentation`_.
+            The minimum value in the first range and the maximum value in the last range
+            can be tailored to the dataset by using the "jam values" provided in
+            the `American Community Survey's technical documentation`_.
         design_factor (float, optional): A statistical input used to tailor the standard error to the
-            variance of the dataset. This is only needed for data coming from PUMS. The Census Bureau publishes design factors as
-            part of its PUMS Accuracy statement.
-            Find the value for the dataset you are estimating by referring to `the bureau's reference material`_.
-            If you do not provide this input, the default is one which will have no effect on the margin of error.
-        sampling_percentage (float, optional): A statistical input used to correct variance for finite population. This value
-            represents the percentage of the population that was sampled to create the data. If you do not provide this input, a
-            margin of error will not be returned.
+            variance of the dataset. This is only needed for data coming from public use microdata sample,
+            also known as PUMS. You do not need to provide this input if you are approximating
+            data from the American Community Survey. The design factor for each PUMS
+            dataset is provided as part of `the bureau's reference material`_.
+        sampling_percentage (float, optional): A statistical input used to correct for variance linked to the size of the survey's population sample. This value submitted should be the percentage of the overall population that participated in the survey. Some common values:
+            * One-year PUMS: 1
+            * One-year ACS: 2.5
+            * Three-year ACS: 7.5
+            * Five-year ACS: 12.5
+         If you do not provide this input, a margin of error will not be returned.
 
     Returns:
         A two-item tuple with the median followed by the approximated margin of error.
@@ -111,7 +115,7 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
             dict(min=200000, max=250001, n=18)
         ]
 
-        >>> approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5)
+        >>> approximate_median(household_income_2013_acs5, sampling_percentage=5*2.5)
         (42211.096153846156, 4706.522752733644)
 
     ... _official guidelines:
@@ -162,8 +166,8 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
     standard_error = (design_factor * math.sqrt(((100 - sampling_percentage) / (n * sampling_percentage)) * (50**2))) / 100
 
     # Use the standard error to calculate the p values
-    p_lower = (.5 - standard_error)
-    p_upper = (.5 + standard_error)
+    p_lower = .5 - standard_error
+    p_upper = .5 + standard_error
 
     # Estimate the p_lower and p_upper n values
     p_lower_n = n * p_lower

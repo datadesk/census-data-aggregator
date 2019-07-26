@@ -122,7 +122,7 @@ If you do not provide the value to the function, no margin of error will be retu
   >>> census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs1)
   70065.84266055046, None
 
-If the data being approximated comes from PUMS, a additional design factor must also be provided. The design factor is a statistical input used to tailor the estimate to the variance of the dataset. Find the value for the dataset you are estimating by referring to `the bureau's reference material <https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html>`_.
+If the data being approximated comes from PUMS, an additional design factor must also be provided. The design factor is a statistical input used to tailor the estimate to the variance of the dataset. Find the value for the dataset you are estimating by referring to `the bureau's reference material <https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html>`_.
 
 
 Approximating percent change

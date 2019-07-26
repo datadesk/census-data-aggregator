@@ -91,28 +91,28 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             (54811.92744757085, 218.6913805834877)
         )
 
-        household_income_Los_Angeles_County_2013_acs5 = [
-          dict(min=2499, max=9999, n=209050),
-          dict(min=10000, max=14999, n=190300),
-          dict(min=15000, max=19999, n=173380),
-          dict(min=20000, max=24999, n=167740),
-          dict(min=25000, max=29999, n=154347),
-          dict(min=30000, max=34999, n=155834),
-          dict(min=35000, max=39999, n=143103),
-          dict(min=40000, max=44999, n=140946),
-          dict(min=45000, max=49999, n=126807),
-          dict(min=50000, max=59999, n=241482),
-          dict(min=60000, max=74999, n=303887),
-          dict(min=75000, max=99999, n=384881),
-          dict(min=100000, max=124999, n=268689),
-          dict(min=125000, max=149999, n=169129),
-          dict(min=150000, max=199999, n=189195),
-          dict(min=200000, max=250001, n=211613)
+        household_income_la_2013_acs1 = [
+            dict(min=2499, max=9999, n=1382),
+            dict(min=10000, max=14999, n=2377),
+            dict(min=15000, max=19999, n=1332),
+            dict(min=20000, max=24999, n=3129),
+            dict(min=25000, max=29999, n=1927),
+            dict(min=30000, max=34999, n=1825),
+            dict(min=35000, max=39999, n=1567),
+            dict(min=40000, max=44999, n=1996),
+            dict(min=45000, max=49999, n=1757),
+            dict(min=50000, max=59999, n=3523),
+            dict(min=60000, max=74999, n=4360),
+            dict(min=75000, max=99999, n=6424),
+            dict(min=100000, max=124999, n=5257),
+            dict(min=125000, max=149999, n=3485),
+            dict(min=150000, max=199999, n=2926),
+            dict(min=200000, max=250001, n=4215)
         ]
 
         self.assertEqual(
-            census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs5, sampling_percentage=2.5*5),
-            (56363.58534176461, 161.96723586588095)
+            census_data_aggregator.approximate_median(household_income_la_2013_acs1, sampling_percentage=2.5),
+            (70065.84266055046, 3850.680465234964)
         )
 
         with self.assertWarns(SamplingPercentageWarning):

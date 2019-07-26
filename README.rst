@@ -113,14 +113,14 @@ For a margin of error to be returned, a sampling percentage must be provided to 
 .. code-block:: python
 
     >>> census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs1, sampling_percentage=2.5)
-    54811.92744757085, 388.8872772535171
+    70065.84266055046, 3850.680465234964
 
 If you do not provide the value to the function, no margin of error will be returned.
 
 .. code-block:: python
 
   >>> census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs1)
-  42211.096153846156, None
+  70065.84266055046, None
 
 If the data being approximated comes from PUMS, a additional design factor must also be provided. The design factor is a statistical input used to tailor the estimate to the variance of the dataset. Find the value for the dataset you are estimating by referring to `the bureau's reference material <https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html>`_.
 

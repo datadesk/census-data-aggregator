@@ -81,7 +81,8 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
             also known as PUMS. You do not need to provide this input if you are approximating
             data from the American Community Survey. The design factor for each PUMS
             dataset is provided as part of `the bureau's reference material`_.
-        sampling_percentage (float, optional): A statistical input used to correct for variance linked to the size of the survey's population sample. This value submitted should be the percentage of the overall population that participated in the survey. Some common values:
+        sampling_percentage (float, optional): A statistical input used to correct for variance linked to
+            the size of the survey's population sample. This value submitted should be the percentage of
             * One-year PUMS: 1
             * One-year ACS: 2.5
             * Three-year ACS: 7.5

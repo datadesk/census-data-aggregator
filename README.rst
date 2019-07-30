@@ -8,6 +8,7 @@ Features
 ^^^^^^^^
 
 * Approximating sums
+* Approximating means
 * Approximating medians
 * Approximating percent change
 * Approximating products
@@ -49,6 +50,56 @@ Accepts an open-ended set of paired lists, each expected to provide an estimate 
       (females_under_5, females_under_5_moe)
   )
   19866960, 5437.757350231803
+
+
+Approximating means
+~~~~~~~~~~~~~~~~~~~
+
+Estimate a mean and approximate the margin of error. Uses a simulation approach. 
+First simulates number of units in each bin (assumes normal distribution around the estimate). 
+Then for each unit a value within the bin is simulated (assuming a uniform distribution within each bin).
+
+Expects a list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have four keys:
+
+.. list-table::
+  :header-rows: 1
+
+  * - key
+    - value
+  * - min
+    - The minimum value of the range
+  * - max
+    - The maximum value of the range
+  * - n
+    - The number of people, households or other units in the range
+  * - moe
+    - The margin of error for the number of units in the range
+
+Also expects the number of simulations to run (default = 50) and an optional seed if you want your results to be replicable. 
+Note that due to the simulation, this function takes some time to run. The example takes a little over a minute.
+
+.. code-block:: python
+
+ >>> income = [
+            dict(min=2499, max=9999, n=7942251, moe=17662),
+            dict(min=10000, max=14999, n=5768114, moe=16409),
+            dict(min=15000, max=19999, n=5727180, moe=16801),
+            dict(min=20000, max=24999, n=5910725, moe=17864),
+            dict(min=25000, max=29999, n=5619002, moe=16113),
+            dict(min=30000, max=34999, n=5711286, moe=15891),
+            dict(min=35000, max=39999, n=5332778, moe=16488),
+            dict(min=40000, max=44999, n=5354520, moe=15415),
+            dict(min=45000, max=49999, n=4725195, moe=16890),
+            dict(min=50000, max=59999, n=9181800, moe=20965),
+            dict(min=60000, max=74999, n=11818514, moe=30723),
+            dict(min=75000, max=99999, n=14636046, moe=49159),
+            dict(min=100000, max=124999, n=10273788, moe=47842),
+            dict(min=125000, max=149999, n=6428069, moe=37952),
+            dict(min=150000, max=199999, n=6931136, moe=37236),
+            dict(min=200000, max=250001, n=7465517, moe=42206)
+        ]
+   >>> approximate_mean(income)
+  (774578.4565215431, 128.94103705296743)
 
 
 Approximating medians

@@ -219,6 +219,32 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
         self.assertAlmostEqual(num_1unit_det_oou_est, 61393366, places=0)
         self.assertAlmostEqual(num_1unit_det_oou_moe, 202289, places=0)
 
+    def test_mean(self):
+        range_list = [
+            dict(min=2499, max=9999, n=7942251, moe=17662),
+            dict(min=10000, max=14999, n=5768114, moe=16409),
+            dict(min=15000, max=19999, n=5727180, moe=16801),
+            dict(min=20000, max=24999, n=5910725, moe=17864),
+            dict(min=25000, max=29999, n=5619002, moe=16113),
+            dict(min=30000, max=34999, n=5711286, moe=15891),
+            dict(min=35000, max=39999, n=5332778, moe=16488),
+            dict(min=40000, max=44999, n=5354520, moe=15415),
+            dict(min=45000, max=49999, n=4725195, moe=16890),
+            dict(min=50000, max=59999, n=9181800, moe=20965),
+            dict(min=60000, max=74999, n=11818514, moe=30723),
+            dict(min=75000, max=99999, n=14636046, moe=49159),
+            dict(min=100000, max=124999, n=10273788, moe=47842),
+            dict(min=125000, max=149999, n=6428069, moe=37952),
+            dict(min=150000, max=199999, n=6931136, moe=37236),
+            dict(min=200000, max=250001, n=7465517, moe=42206)
+        ]
+
+        # Calculate the mean and its MOE
+        mean, moe = census_data_aggregator.approximate_mean(range_list, rng=711355)
+
+        self.assertAlmostEqual(mean, 74578.4565215431, places=3)
+        self.assertAlmostEqual(moe, 128.94103705296743, places=3)
+
 
 if __name__ == '__main__':
     unittest.main()

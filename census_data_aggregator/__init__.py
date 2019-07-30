@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 import math
+import numpy
 import warnings
 from .exceptions import DataError, SamplingPercentageWarning
 
@@ -405,3 +406,75 @@ def approximate_percentchange(pair_old, pair_new):
 
     # Return the results
     return percent_change_estimate, percent_change_moe
+
+
+def approximate_mean(range_list, number_replicates=50, rng=None):
+    """
+    Estimate a mean and approximate the margin of error.
+
+    Args:
+        range_list (list): A list of dictionaries that divide the full range of data values into continuous categories.
+            Each dictionary should have four keys:
+                * min (int): The minimum value of the range
+                * max (int): The maximum value of the range
+                * n (int): The number of people, households or other unit in the range
+                * moe (float): The margin of error for n
+            The minimum value in the first range and the maximum value in the last range can be tailored to the dataset
+            by using the "jam values" provided in the `American Community Survey's technical documentation`_.
+        number_replicates (int): number of replicates for simulation, used to estimate margin of error
+        rng (int, optional): a seed, used to ensure replicability due to randomness in simulation
+
+    Returns:
+        A two-item tuple with the mean followed by the approximated margin of error.
+
+        (774578.4565215431, 128.94103705296743)
+
+    Examples:
+        Estimating the mean for a range of household incomes.
+
+        >>> income = [
+            dict(min=2499, max=9999, n=7942251, moe=17662),
+            dict(min=10000, max=14999, n=5768114, moe=16409),
+            dict(min=15000, max=19999, n=5727180, moe=16801),
+            dict(min=20000, max=24999, n=5910725, moe=17864),
+            dict(min=25000, max=29999, n=5619002, moe=16113),
+            dict(min=30000, max=34999, n=5711286, moe=15891),
+            dict(min=35000, max=39999, n=5332778, moe=16488),
+            dict(min=40000, max=44999, n=5354520, moe=15415),
+            dict(min=45000, max=49999, n=4725195, moe=16890),
+            dict(min=50000, max=59999, n=9181800, moe=20965),
+            dict(min=60000, max=74999, n=11818514, moe=30723),
+            dict(min=75000, max=99999, n=14636046, moe=49159),
+            dict(min=100000, max=124999, n=10273788, moe=47842),
+            dict(min=125000, max=149999, n=6428069, moe=37952),
+            dict(min=150000, max=199999, n=6931136, moe=37236),
+            dict(min=200000, max=250001, n=7465517, moe=42206)
+        ]
+        >>> approximate_mean(income)
+        (774578.4565215431, 128.94103705296743)
+    """
+
+    if rng is not None:
+        numpy.random.seed(rng)
+
+    # Sort the list
+    range_list.sort(key=lambda x: x['min'])
+
+    simR = []
+    for i in range(number_replicates):  # simulation
+        test = []
+        track_n = []
+        for range_ in range_list:
+            se = range_['moe'] / 1.645  # convert moe to se
+            nn = round(numpy.random.normal(range_['n'], se))  # use moe to introduce randomness into number in bin
+            nn = int(nn)  # clean it up
+            test.append(numpy.random.uniform(range_['min'], range_['max'], size=(1, nn)).sum())  # draw random values within the bin, assume uniform
+            track_n.append(nn)
+        simR.append(sum(test) / sum(track_n))
+
+    estimated_mean = numpy.mean(simR)
+    se = max(numpy.quantile(simR, 0.95) - numpy.mean(simR), numpy.mean(simR) - numpy.quantile(simR, 0.05))
+    margin_of_error = 1.645 * se
+
+    # Return the result
+    return estimated_mean, margin_of_error

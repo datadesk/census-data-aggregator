@@ -77,7 +77,9 @@ Expects a list of dictionaries that divide the full range of data values into co
     - The margin of error for the number of units in the range
 
 Also expects the number of simulations to run (default = 50) and an optional seed if you want your results to be replicable. 
-Note that due to the simulation, this function takes some time to run. The example takes a little over a minute.
+Note that due to the simulation, this function takes some time to run. The example takes a little over a minute. 
+Increasing the number of runs should increase your precision (with diminishing returns) at the cost of a slower run time.
+If you do not set the seed, another call of the function with the same inputs is not guaranteed to return the same answer.
 
 .. code-block:: python
 

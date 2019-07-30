@@ -56,7 +56,7 @@ Approximating means
 ~~~~~~~~~~~~~~~~~~~
 
 Estimate a mean and approximate the margin of error. Uses a simulation approach. 
-First simulates number of units in each bin (assumes normal distribution around the estimate). 
+First the number of units in each bin is simulated (assuming a normal distribution around the estimate). 
 Then for each unit a value within the bin is simulated (assuming a uniform distribution within each bin).
 
 Expects a list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have four keys:
@@ -98,7 +98,7 @@ Note that due to the simulation, this function takes some time to run. The examp
             dict(min=150000, max=199999, n=6931136, moe=37236),
             dict(min=200000, max=250001, n=7465517, moe=42206)
         ]
-   >>> approximate_mean(income)
+ >>> approximate_mean(income)
   (774578.4565215431, 128.94103705296743)
 
 

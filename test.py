@@ -243,7 +243,7 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
         mean, moe = census_data_aggregator.approximate_mean(range_list, rng=711355)
 
         self.assertAlmostEqual(mean, 74578.4565215431, places=3)
-        self.assertAlmostEqual(moe, 128.94103705296743, places=3)
+        self.assertAlmostEqual(moe, 78.38360915074009, places=3)
 
 
 if __name__ == '__main__':

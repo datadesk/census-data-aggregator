@@ -473,8 +473,9 @@ def approximate_mean(range_list, number_replicates=50, rng=None):
         simR.append(sum(test) / sum(track_n))
 
     estimated_mean = numpy.mean(simR)
-    se = max(numpy.quantile(simR, 0.95) - numpy.mean(simR), numpy.mean(simR) - numpy.quantile(simR, 0.05))
-    margin_of_error = 1.645 * se
+    t1 = numpy.quantile(simR, 0.95) - estimated_mean
+    t2 = estimated_mean - numpy.quantile(simR, 0.05)
+    margin_of_error = max(t1, t2)   # if asymmetrical take bigger one, conservative
 
     # Return the result
     return estimated_mean, margin_of_error

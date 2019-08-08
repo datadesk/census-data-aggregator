@@ -125,8 +125,6 @@ Expects a list of dictionaries that divide the full range of data values into co
     - The number of people, households or other units in the range
 
 
-The minimum value in the first range and the maximum value in the last range can be tailored to the dataset by using the "jam values" provided in the `American Community Survey's technical documentation <https://www.documentcloud.org/documents/6165752-2017-SummaryFile-Tech-Doc.html#document/p20/a508561>`_.
-
 .. code-block:: python
 
   >>> household_income_la_2013_acs1 = [

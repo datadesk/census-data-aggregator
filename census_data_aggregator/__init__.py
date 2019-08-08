@@ -419,8 +419,6 @@ def approximate_mean(range_list, number_replicates=50, rng=None):
                 * max (int): The maximum value of the range
                 * n (int): The number of people, households or other unit in the range
                 * moe (float): The margin of error for n
-            The minimum value in the first range and the maximum value in the last range can be tailored to the dataset
-            by using the "jam values" provided in the `American Community Survey's technical documentation`_.
         number_replicates (int): number of replicates for simulation, used to estimate margin of error
         rng (int, optional): a seed, used to ensure replicability due to randomness in simulation
 

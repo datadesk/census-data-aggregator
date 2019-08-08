@@ -410,7 +410,11 @@ def approximate_percentchange(pair_old, pair_new):
 
 def approximate_mean(range_list, number_replicates=50, rng=None):
     """
-    Estimate a mean and approximate the margin of error.
+    Estimate a mean and approximate the margin of error. The Census Bureau guidelines do not provide instructions for
+    approximating a mean using data from the ACS. They do provide guidance for approximating a mean with data `from the PUMS`_.
+    Instead, we implement a simulation based approach. Due to the stochastic nature of the simulation approach, you will need to set
+    a seed before running this function to ensure replicability. Note that this function assumes you have a lower bound for the smallest
+    bin and an upper bound for the largest bin.
 
     Args:
         range_list (list): A list of dictionaries that divide the full range of data values into continuous categories.
@@ -420,7 +424,6 @@ def approximate_mean(range_list, number_replicates=50, rng=None):
                 * n (int): The number of people, households or other unit in the range
                 * moe (float): The margin of error for n
         number_replicates (int): number of replicates for simulation, used to estimate margin of error
-        rng (int, optional): a seed, used to ensure replicability due to randomness in simulation
 
     Returns:
         A two-item tuple with the mean followed by the approximated margin of error.
@@ -450,30 +453,30 @@ def approximate_mean(range_list, number_replicates=50, rng=None):
         ]
         >>> approximate_mean(income)
         (774578.4565215431, 128.94103705296743)
-    """
 
-    if rng is not None:
-        numpy.random.seed(rng)
+    ... _from the PUMS:
+    https://www2.census.gov/programs-surveys/acs/tech_docs/pums/accuracy/2013_2017AccuracyPUMS.pdf?#
+    """
 
     # Sort the list
     range_list.sort(key=lambda x: x['min'])
 
-    simR = []
-    for i in range(number_replicates):  # simulation
-        test = []
-        track_n = []
+    simulation_results = []
+    for i in range(number_replicates):
+        simulated_values = []
+        simulated_n = []
         for range_ in range_list:
             se = range_['moe'] / 1.645  # convert moe to se
             nn = round(numpy.random.normal(range_['n'], se))  # use moe to introduce randomness into number in bin
             nn = int(nn)  # clean it up
-            test.append(numpy.random.uniform(range_['min'], range_['max'], size=(1, nn)).sum())  # draw random values within the bin, assume uniform
-            track_n.append(nn)
-        simR.append(sum(test) / sum(track_n))
+            simulated_values.append(numpy.random.uniform(range_['min'], range_['max'], size=(1, nn)).sum())  # draw random values within the bin, assume uniform
+            simulated_n.append(nn)  # keep track of new n
+        simulation_results.append(sum(simulated_values) / sum(simulated_n))  # calculate mean for replicate
 
-    estimated_mean = numpy.mean(simR)
-    t1 = numpy.quantile(simR, 0.95) - estimated_mean
-    t2 = estimated_mean - numpy.quantile(simR, 0.05)
-    margin_of_error = max(t1, t2)   # if asymmetrical take bigger one, conservative
+    estimated_mean = numpy.mean(simulation_results)  # calculate overall mean
+    moe_right = numpy.quantile(simulation_results, 0.95) - estimated_mean  # go from confidence interval to margin of error
+    moe_left = estimated_mean - numpy.quantile(simulation_results, 0.05)  # go from confidence interval to margin of error
+    margin_of_error = max(moe_left, moe_right)   # if asymmetrical take bigger one, conservative
 
     # Return the result
     return estimated_mean, margin_of_error

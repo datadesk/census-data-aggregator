@@ -3,6 +3,7 @@
 import doctest
 import unittest
 import census_data_aggregator
+import numpy
 from census_data_aggregator.exceptions import (
     DataError,
     SamplingPercentageWarning
@@ -238,9 +239,9 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             dict(min=150000, max=199999, n=6931136, moe=37236),
             dict(min=200000, max=250001, n=7465517, moe=42206)
         ]
-
+        numpy.random.seed(711355)
         # Calculate the mean and its MOE
-        mean, moe = census_data_aggregator.approximate_mean(range_list, rng=711355)
+        mean, moe = census_data_aggregator.approximate_mean(range_list)
 
         self.assertAlmostEqual(mean, 74578.4565215431, places=3)
         self.assertAlmostEqual(moe, 78.38360915074009, places=3)

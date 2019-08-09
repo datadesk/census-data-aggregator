@@ -55,10 +55,13 @@ Accepts an open-ended set of paired lists, each expected to provide an estimate 
 Approximating means
 ~~~~~~~~~~~~~~~~~~~
 
-Estimate a mean and approximate the margin of error. Uses a simulation approach. 
-First the number of units in each bin is simulated (assuming a normal distribution around the estimate). 
-Then for each unit a value within the bin is simulated (assuming a uniform distribution within each bin).
+Estimate a mean and approximate the margin of error. The Census Bureau guidelines do not provide instructions for
+approximating a mean using data from the ACS. They do provide guidance for approximating a mean with data `from the PUMS <https://www2.census.gov/programs-surveys/acs/tech_docs/pums/accuracy/2013_2017AccuracyPUMS.pdf?#>`_.
+Instead, we implement a simulation based approach. First the number of units in each bin is simulated (assuming a normal distribution around the
+estimate). Then for each unit a value within the bin is simulated (assuming a uniform distribution within each bin).
 We can then calculate the mean directly from the simulated data. We repeat the simulation many times to calculate an empirical margin of error.
+Note that this function assumes you have a lower bound for the smallest bin and an upper bound for the largest bin.
+
 
 Expects a list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have four keys:
 
@@ -76,10 +79,11 @@ Expects a list of dictionaries that divide the full range of data values into co
   * - moe
     - The margin of error for the number of units in the range
 
-Also expects the number of simulations to run (default = 50) and an optional seed if you want your results to be replicable. 
-Note that due to the simulation, this function takes some time to run. The example takes a little over a minute. 
+Also expects the number of simulations to run (default = 50). Due to the stochastic nature of the simulation approach, you will need to set a
+seed before running this function to ensure replicability. If you do not set the seed, another call of the function with the same inputs is not
+guaranteed to return the same answer. Note that due to the simulation, this function takes some time to run. The example takes a little over a minute. 
 Increasing the number of runs should increase your precision (with diminishing returns) at the cost of a slower run time.
-If you do not set the seed, another call of the function with the same inputs is not guaranteed to return the same answer.
+
 
 .. code-block:: python
 

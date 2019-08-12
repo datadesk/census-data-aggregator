@@ -414,7 +414,8 @@ def approximate_mean(range_list, number_replicates=50, rng=None):
     approximating a mean using data from the ACS. They do provide guidance for approximating a mean with data `from the PUMS`_.
     Instead, we implement a simulation based approach. Due to the stochastic nature of the simulation approach, you will need to set
     a seed before running this function to ensure replicability. Note that this function assumes you have a lower bound for the smallest
-    bin and an upper bound for the largest bin.
+    bin and an upper bound for the largest bin. We recommend trying different lower and upper bounds to assess the sensitivity of the
+    resulting mean to your assumptions.
 
     Args:
         range_list (list): A list of dictionaries that divide the full range of data values into continuous categories.
@@ -434,7 +435,7 @@ def approximate_mean(range_list, number_replicates=50, rng=None):
         Estimating the mean for a range of household incomes.
 
         >>> income = [
-            dict(min=2499, max=9999, n=7942251, moe=17662),
+            dict(min=0, max=9999, n=7942251, moe=17662),
             dict(min=10000, max=14999, n=5768114, moe=16409),
             dict(min=15000, max=19999, n=5727180, moe=16801),
             dict(min=20000, max=24999, n=5910725, moe=17864),
@@ -449,10 +450,10 @@ def approximate_mean(range_list, number_replicates=50, rng=None):
             dict(min=100000, max=124999, n=10273788, moe=47842),
             dict(min=125000, max=149999, n=6428069, moe=37952),
             dict(min=150000, max=199999, n=6931136, moe=37236),
-            dict(min=200000, max=250001, n=7465517, moe=42206)
+            dict(min=200000, max=1000000, n=7465517, moe=42206)
         ]
         >>> approximate_mean(income)
-        (774578.4565215431, 128.94103705296743)
+        (98045.44530685373, 194.54892406267754)
 
     ... _from the PUMS:
     https://www2.census.gov/programs-surveys/acs/tech_docs/pums/accuracy/2013_2017AccuracyPUMS.pdf?#

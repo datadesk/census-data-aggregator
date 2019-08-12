@@ -222,7 +222,7 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
 
     def test_mean(self):
         range_list = [
-            dict(min=2499, max=9999, n=7942251, moe=17662),
+            dict(min=0, max=9999, n=7942251, moe=17662),
             dict(min=10000, max=14999, n=5768114, moe=16409),
             dict(min=15000, max=19999, n=5727180, moe=16801),
             dict(min=20000, max=24999, n=5910725, moe=17864),
@@ -237,14 +237,14 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             dict(min=100000, max=124999, n=10273788, moe=47842),
             dict(min=125000, max=149999, n=6428069, moe=37952),
             dict(min=150000, max=199999, n=6931136, moe=37236),
-            dict(min=200000, max=250001, n=7465517, moe=42206)
+            dict(min=200000, max=1000000, n=7465517, moe=42206)
         ]
         numpy.random.seed(711355)
         # Calculate the mean and its MOE
         mean, moe = census_data_aggregator.approximate_mean(range_list)
 
-        self.assertAlmostEqual(mean, 74578.4565215431, places=3)
-        self.assertAlmostEqual(moe, 78.38360915074009, places=3)
+        self.assertAlmostEqual(mean, 98045.44530685373, places=3)
+        self.assertAlmostEqual(moe, 194.54892406267754, places=3)
 
 
 if __name__ == '__main__':

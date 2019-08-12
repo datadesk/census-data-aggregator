@@ -59,8 +59,10 @@ Estimate a mean and approximate the margin of error. The Census Bureau guideline
 approximating a mean using data from the ACS. They do provide guidance for approximating a mean with data `from the PUMS <https://www2.census.gov/programs-surveys/acs/tech_docs/pums/accuracy/2013_2017AccuracyPUMS.pdf?#>`_.
 Instead, we implement a simulation based approach. First the number of units in each bin is simulated (assuming a normal distribution around the
 estimate). Then for each unit a value within the bin is simulated (assuming a uniform distribution within each bin).
+Note that for quantities, such as income, the Pareto distribution is `often used <https://www2.census.gov/ces/wp/2014/CES-WP-14-21.pdf>`_ instead of the uniform distribution in the upper-most bin. We do not do this here.
 We can then calculate the mean directly from the simulated data. We repeat the simulation many times to calculate an empirical margin of error.
-Note that this function assumes you have a lower bound for the smallest bin and an upper bound for the largest bin.
+Note that this function assumes you have a lower bound for the smallest bin and an upper bound for the largest bin. We recommend trying different
+lower and upper bounds to assess the sensitivity of the resulting mean to your assumptions.
 
 
 Expects a list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have four keys:
@@ -88,7 +90,7 @@ Increasing the number of runs should increase your precision (with diminishing r
 .. code-block:: python
 
  >>> income = [
-            dict(min=2499, max=9999, n=7942251, moe=17662),
+            dict(min=0, max=9999, n=7942251, moe=17662),
             dict(min=10000, max=14999, n=5768114, moe=16409),
             dict(min=15000, max=19999, n=5727180, moe=16801),
             dict(min=20000, max=24999, n=5910725, moe=17864),
@@ -103,10 +105,9 @@ Increasing the number of runs should increase your precision (with diminishing r
             dict(min=100000, max=124999, n=10273788, moe=47842),
             dict(min=125000, max=149999, n=6428069, moe=37952),
             dict(min=150000, max=199999, n=6931136, moe=37236),
-            dict(min=200000, max=250001, n=7465517, moe=42206)
+            dict(min=200000, max=1000000, n=7465517, moe=42206)
         ]
  >>> approximate_mean(income)
-  774578.4565215431, 128.94103705296743
 
 
 Approximating medians

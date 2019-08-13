@@ -17,6 +17,9 @@ setup(
     url='http://www.github.com/datadesk/census-data-aggregator',
     license="MIT",
     packages=("census_data_aggregator",),
+    install_requires=[
+          'numpy',
+      ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',

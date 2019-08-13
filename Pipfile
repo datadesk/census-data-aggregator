@@ -9,6 +9,7 @@ flake8 = "*"
 coverage = "*"
 
 [packages]
+numpy = ">=1.14.0"
 
 [requires]
 python_version = "3.6"

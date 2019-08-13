@@ -472,7 +472,6 @@ def approximate_mean(range_list, simulations=50, pareto=False):
     range_list.sort(key=lambda x: x['min'])
 
     if pareto:  # need shape parameter if using Pareto distribution
-
         nb1 = range_list[-2]['n']  # number in second to last bin
         nb = range_list[-1]['n']  # number in last bin
         lb1 = range_list[-2]['min']  # lower bound of second to last bin
@@ -498,6 +497,7 @@ def approximate_mean(range_list, simulations=50, pareto=False):
             nn = int(nn)  # clean it up
             simulated_values.append(numpy.random.pareto(a=alpha_hat, size=(1, nn)).sum())  # draw random values within the bin, assume uniform
             simulated_n.append(nn)
+        # use uniform otherwise
         else:
             last = range_list[-1]
             se = last['moe'] / 1.645  # convert moe to se

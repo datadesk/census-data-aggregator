@@ -108,6 +108,11 @@ Increasing the number of runs should increase your precision (with diminishing r
             dict(min=200000, max=1000000, n=7465517, moe=42206)
         ]
  >>> approximate_mean(income)
+ (98045.44530685373, 194.54892406267754)
+ 
+ >>> approximate_mean(income, usePareto=True)
+ (60364.96525340687, 58.60735554621351)
+
 
 
 Approximating medians

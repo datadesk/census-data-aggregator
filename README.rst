@@ -59,7 +59,7 @@ Estimate a mean and approximate the margin of error. The Census Bureau guideline
 approximating a mean using data from the ACS. They do provide guidance for approximating a mean with data `from the PUMS <https://www2.census.gov/programs-surveys/acs/tech_docs/pums/accuracy/2013_2017AccuracyPUMS.pdf?#>`_.
 Instead, we implement a simulation based approach. First the number of units in each bin is simulated (assuming a normal distribution around the
 estimate). Then for each unit a value within the bin is simulated (assuming a uniform distribution within each bin).
-Note that for quantities, such as income, the Pareto distribution is `often used <https://www2.census.gov/ces/wp/2014/CES-WP-14-21.pdf>`_ instead of the uniform distribution in the upper-most bin. We do not do this here.
+Note that for quantities, such as income, the Pareto distribution is `often used <https://www2.census.gov/ces/wp/2014/CES-WP-14-21.pdf>`_ instead of the uniform distribution in the upper-most bin. We provide an option to do this (`usePareto = True`).
 We can then calculate the mean directly from the simulated data. We repeat the simulation many times to calculate an empirical margin of error.
 Note that this function assumes you have a lower bound for the smallest bin and an upper bound for the largest bin. We recommend trying different
 lower and upper bounds to assess the sensitivity of the resulting mean to your assumptions.

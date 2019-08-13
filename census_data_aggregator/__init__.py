@@ -408,7 +408,7 @@ def approximate_percentchange(pair_old, pair_new):
     return percent_change_estimate, percent_change_moe
 
 
-def approximate_mean(range_list, number_replicates=50, rng=None):
+def approximate_mean(range_list, number_replicates=50, usePareto=False):
     """
     Estimate a mean and approximate the margin of error. The Census Bureau guidelines do not provide instructions for
     approximating a mean using data from the ACS. They do provide guidance for approximating a mean with data `from the PUMS`_.
@@ -425,6 +425,7 @@ def approximate_mean(range_list, number_replicates=50, rng=None):
                 * n (int): The number of people, households or other unit in the range
                 * moe (float): The margin of error for n
         number_replicates (int): number of replicates for simulation, used to estimate margin of error
+        usePareto (logical): use the Pareto distribution to simulate from in upper bin, otherwise use uniform, Pareto is appropriate for income
 
     Returns:
         A two-item tuple with the mean followed by the approximated margin of error.
@@ -454,6 +455,8 @@ def approximate_mean(range_list, number_replicates=50, rng=None):
         ]
         >>> approximate_mean(income)
         (98045.44530685373, 194.54892406267754)
+        >>> approximate_mean(income, usePareto=True)
+        (60364.96525340687, 58.60735554621351)
 
     ... _from the PUMS:
     https://www2.census.gov/programs-surveys/acs/tech_docs/pums/accuracy/2013_2017AccuracyPUMS.pdf?#
@@ -462,16 +465,39 @@ def approximate_mean(range_list, number_replicates=50, rng=None):
     # Sort the list
     range_list.sort(key=lambda x: x['min'])
 
+    idx = len(range_list)
+
+    nb1 = range_list[idx - 2]['n']  # number in second to last bin
+    nb = range_list[idx - 1]['n']  # number in last bin
+    lb1 = range_list[idx - 2]['min']  # lower bound of second to last bin
+    lb = range_list[idx - 1]['min']  # lower bound of last bin
+
+    alpha_hat = (numpy.log(nb1 + nb) - numpy.log(nb)) / (numpy.log(lb) - numpy.log(lb1))
+
     simulation_results = []
     for i in range(number_replicates):
         simulated_values = []
         simulated_n = []
-        for range_ in range_list:
+        for range_ in range_list[:-1]:
             se = range_['moe'] / 1.645  # convert moe to se
             nn = round(numpy.random.normal(range_['n'], se))  # use moe to introduce randomness into number in bin
             nn = int(nn)  # clean it up
             simulated_values.append(numpy.random.uniform(range_['min'], range_['max'], size=(1, nn)).sum())  # draw random values within the bin, assume uniform
-            simulated_n.append(nn)  # keep track of new n
+            simulated_n.append(nn)
+        if usePareto:
+            last = range_list[idx - 1]
+            se = last['moe'] / 1.645  # convert moe to se
+            nn = round(numpy.random.normal(last['n'], se))  # use moe to introduce randomness into number in bin
+            nn = int(nn)  # clean it up
+            simulated_values.append(numpy.random.pareto(a=alpha_hat, size=(1, nn)).sum())  # draw random values within the bin, assume uniform
+            simulated_n.append(nn)
+        else:
+            last = range_list[idx - 1]
+            se = last['moe'] / 1.645  # convert moe to se
+            nn = round(numpy.random.normal(last['n'], se))  # use moe to introduce randomness into number in bin
+            nn = int(nn)  # clean it up
+            simulated_values.append(numpy.random.uniform(last['min'], last['max'], size=(1, nn)).sum())  # draw random values within the bin, assume uniform
+            simulated_n.append(nn)
         simulation_results.append(sum(simulated_values) / sum(simulated_n))  # calculate mean for replicate
 
     estimated_mean = numpy.mean(simulation_results)  # calculate overall mean

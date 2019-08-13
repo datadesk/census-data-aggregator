@@ -245,6 +245,13 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
 
         self.assertAlmostEqual(mean, 98045.44530685373, places=3)
         self.assertAlmostEqual(moe, 194.54892406267754, places=3)
+        
+        numpy.random.seed(711355)
+
+        mean, moe = census_data_aggregator.approximate_mean(range_list, usePareto=True)
+
+        self.assertAlmostEqual(mean, 60364.96525340687, places=3)
+        self.assertAlmostEqual(moe, 58.60735554621351, places=3)
 
 
 if __name__ == '__main__':

@@ -408,12 +408,18 @@ def approximate_percentchange(pair_old, pair_new):
     return percent_change_estimate, percent_change_moe
 
 
-def approximate_mean(range_list, number_replicates=50, usePareto=False):
+def approximate_mean(range_list, simulations=50, pareto=False):
     """
-    Estimate a mean and approximate the margin of error. The Census Bureau guidelines do not provide instructions for
+    Estimate a mean and approximate the margin of error.
+
+    The Census Bureau guidelines do not provide instructions for
     approximating a mean using data from the ACS. They do provide guidance for approximating a mean with data `from the PUMS`_.
-    Instead, we implement a simulation based approach. Due to the stochastic nature of the simulation approach, you will need to set
-    a seed before running this function to ensure replicability. Note that this function assumes you have a lower bound for the smallest
+    Instead, we implement a simulation based approach.
+
+    Due to the stochastic nature of the simulation approach, you will need to set
+    a seed before running this function to ensure replicability.
+
+    Note that this function assumes you have a lower bound for the smallest
     bin and an upper bound for the largest bin. We recommend trying different lower and upper bounds to assess the sensitivity of the
     resulting mean to your assumptions.
 
@@ -424,8 +430,8 @@ def approximate_mean(range_list, number_replicates=50, usePareto=False):
                 * max (int): The maximum value of the range
                 * n (int): The number of people, households or other unit in the range
                 * moe (float): The margin of error for n
-        number_replicates (int): number of replicates for simulation, used to estimate margin of error
-        usePareto (logical): use the Pareto distribution to simulate from in upper bin, otherwise use uniform, Pareto is appropriate for income
+        simulations (int): number of simulations to run, used to estimate margin of error. Defaults to 50.
+        pareto (logical): use the Pareto distribution to simulate from in upper bin, otherwise use uniform. Pareto is appropriate for income. Defaults to False.
 
     Returns:
         A two-item tuple with the mean followed by the approximated margin of error.
@@ -455,7 +461,7 @@ def approximate_mean(range_list, number_replicates=50, usePareto=False):
         ]
         >>> approximate_mean(income)
         (98045.44530685373, 194.54892406267754)
-        >>> approximate_mean(income, usePareto=True)
+        >>> approximate_mean(income, pareto=True)
         (60364.96525340687, 58.60735554621351)
 
     ... _from the PUMS:
@@ -465,34 +471,35 @@ def approximate_mean(range_list, number_replicates=50, usePareto=False):
     # Sort the list
     range_list.sort(key=lambda x: x['min'])
 
-    idx = len(range_list)
+    if pareto:  # need shape parameter if using Pareto distribution
 
-    nb1 = range_list[idx - 2]['n']  # number in second to last bin
-    nb = range_list[idx - 1]['n']  # number in last bin
-    lb1 = range_list[idx - 2]['min']  # lower bound of second to last bin
-    lb = range_list[idx - 1]['min']  # lower bound of last bin
-
-    alpha_hat = (numpy.log(nb1 + nb) - numpy.log(nb)) / (numpy.log(lb) - numpy.log(lb1))
+        nb1 = range_list[-2]['n']  # number in second to last bin
+        nb = range_list[-1]['n']  # number in last bin
+        lb1 = range_list[-2]['min']  # lower bound of second to last bin
+        lb = range_list[-1]['min']  # lower bound of last bin
+        alpha_hat = (numpy.log(nb1 + nb) - numpy.log(nb)) / (numpy.log(lb) - numpy.log(lb1))  # shape parameter for Pareto
 
     simulation_results = []
-    for i in range(number_replicates):
+    for i in range(simulations):
         simulated_values = []
         simulated_n = []
+        # loop through every bin except the last one
         for range_ in range_list[:-1]:
             se = range_['moe'] / 1.645  # convert moe to se
             nn = round(numpy.random.normal(range_['n'], se))  # use moe to introduce randomness into number in bin
             nn = int(nn)  # clean it up
             simulated_values.append(numpy.random.uniform(range_['min'], range_['max'], size=(1, nn)).sum())  # draw random values within the bin, assume uniform
             simulated_n.append(nn)
-        if usePareto:
-            last = range_list[idx - 1]
+        # a special case to handle the last bin
+        if pareto:
+            last = range_list[-1]
             se = last['moe'] / 1.645  # convert moe to se
             nn = round(numpy.random.normal(last['n'], se))  # use moe to introduce randomness into number in bin
             nn = int(nn)  # clean it up
             simulated_values.append(numpy.random.pareto(a=alpha_hat, size=(1, nn)).sum())  # draw random values within the bin, assume uniform
             simulated_n.append(nn)
         else:
-            last = range_list[idx - 1]
+            last = range_list[-1]
             se = last['moe'] / 1.645  # convert moe to se
             nn = round(numpy.random.normal(last['n'], se))  # use moe to introduce randomness into number in bin
             nn = int(nn)  # clean it up

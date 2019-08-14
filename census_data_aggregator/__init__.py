@@ -4,7 +4,7 @@ from __future__ import division
 import math
 import numpy
 import warnings
-from .exceptions import DataError, SamplingPercentageWarning
+from .exceptions import DataError, SamplingPercentageWarning, JamValueWarning
 
 
 def approximate_sum(*pairs):
@@ -61,7 +61,7 @@ def approximate_sum(*pairs):
     return total, margin_of_error
 
 
-def approximate_median(range_list, design_factor=1, sampling_percentage=None):
+def approximate_median(range_list, design_factor=1, sampling_percentage=None, jam_values=None, simulations=50):
     """
     Estimate a median and approximate the margin of error.
 
@@ -130,99 +130,176 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
     # Sort the list
     range_list.sort(key=lambda x: x['min'])
 
-    # For each range calculate its min and max value along the universe's scale
-    cumulative_n = 0
-    for range_ in range_list:
-        range_['n_min'] = cumulative_n
-        cumulative_n += range_['n']
-        range_['n_max'] = cumulative_n
+    # if moe is included, can use simulation to estimate margin of error for median
+    if "moe" in list(range_list[0].keys()):
+        simulation_results = []
+        for i in range(simulations):
+            # For each range calculate its min and max value along the universe's scale
+            simulated_n = []
+            cumulative_n = 0
+            for range_ in range_list:
+                range_['n_min'] = cumulative_n
+                se = range_['moe'] / 1.645  # convert moe to se
+                nn = round(numpy.random.normal(range_['n'], se))  # use moe to introduce randomness into number in bin
+                nn = int(nn)  # clean it up
+                cumulative_n += nn
+                range_['n_max'] = cumulative_n
+                range_['n_new'] = nn
+                simulated_n.append(nn)
 
-    # What is the total number of observations in the universe?
-    n = sum([d['n'] for d in range_list])
+            # What is the total number of observations in the universe?
+            n = sum([d['n'] for d in range_list])
 
-    # What is the estimated midpoint of the n?
-    n_midpoint = n / 2.0
+            # What is the estimated midpoint of the n?
+            n_midpoint = n / 2.0
 
-    # Now use those to determine which group contains the midpoint.
-    n_midpoint_range = next(d for d in range_list if n_midpoint >= d['n_min'] and n_midpoint <= d['n_max'])
+            # Now use those to determine which group contains the midpoint.
+            n_midpoint_range = next(d for d in range_list if n_midpoint >= d['n_min'] and n_midpoint <= d['n_max'])
 
-    # How many households in the midrange are needed to reach the midpoint?
-    n_midrange_gap = n_midpoint - n_midpoint_range['n_min']
+            # How many households in the midrange are needed to reach the midpoint?
+            n_midrange_gap = n_midpoint - n_midpoint_range['n_min']
 
-    # What is the proportion of the group that would be needed to get the midpoint?
-    n_midrange_gap_percent = n_midrange_gap / n_midpoint_range['n']
+            # What is the proportion of the group that would be needed to get the midpoint?
+            n_midrange_gap_percent = n_midrange_gap / n_midpoint_range['n_new']  # n_midpoint_range['n']
 
-    # Apply this proportion to the width of the midrange
-    n_midrange_gap_adjusted = (n_midpoint_range['max'] - n_midpoint_range['min']) * n_midrange_gap_percent
+            # Apply this proportion to the width of the midrange
+            n_midrange_gap_adjusted = (n_midpoint_range['max'] - n_midpoint_range['min']) * n_midrange_gap_percent
 
-    # Estimate the median
-    estimated_median = n_midpoint_range['min'] + n_midrange_gap_adjusted
+            # Estimate the median
+            estimated_median = n_midpoint_range['min'] + n_midrange_gap_adjusted
 
-    # If there's no sampling percentage, we can't calculate a margin of error
-    if not sampling_percentage:
-        # Let's throw a warning, but still return the median
-        warnings.warn("", SamplingPercentageWarning)
-        return estimated_median, None
+            if math.isnan(n_midpoint_range['max']) and not jam_values:
+                # Let's throw a warning
+                warnings.warn("", JamValueWarning)
+                simulation_results.append(math.nan)  # does it make sense to average these?
+            elif math.isnan(n_midpoint_range['min']) and not jam_values:
+                # Let's throw a warning
+                warnings.warn("", JamValueWarning)
+                simulation_results.append(math.nan)  # does it make sense to average these?
+            elif math.isnan(n_midpoint_range['max']):  # already exhausted the no jam value case
+                estimated_median = jam_values[1]
+                simulation_results.append(estimated_median)
+            elif math.isnan(n_midpoint_range['min']):  # already exhausted the no jam value case
+                estimated_median = jam_values[0]
+                simulation_results.append(estimated_median)
+            else:
+                simulation_results.append(estimated_median)
 
-    # Get the standard error for this dataset
-    standard_error = (design_factor * math.sqrt(((100 - sampling_percentage) / (n * sampling_percentage)) * (50**2))) / 100
+        estimated_median = numpy.nanmean(simulation_results)  # should this be median of medians instead?
+        t1 = numpy.nanquantile(simulation_results, 0.95) - estimated_median  # go from confidence interval to margin of error
+        t2 = estimated_median - numpy.nanquantile(simulation_results, 0.05)  # go from confidence interval to margin of error
+        margin_of_error = max(t1, t2)   # if asymmetrical take bigger one, conservative
+    # get the median and moe via census approximation
+    else:
+        # For each range calculate its min and max value along the universe's scale
+        cumulative_n = 0
+        for range_ in range_list:
+            range_['n_min'] = cumulative_n
+            cumulative_n += range_['n']
+            range_['n_max'] = cumulative_n
 
-    # Use the standard error to calculate the p values
-    p_lower = .5 - standard_error
-    p_upper = .5 + standard_error
+        # What is the total number of observations in the universe?
+        n = sum([d['n'] for d in range_list])
 
-    # Estimate the p_lower and p_upper n values
-    p_lower_n = n * p_lower
-    p_upper_n = n * p_upper
+        # What is the estimated midpoint of the n?
+        n_midpoint = n / 2.0
 
-    # Find the ranges the p values fall within
-    try:
-        p_lower_range_i, p_lower_range = next(
-            (i, d) for i, d in enumerate(range_list)
-            if p_lower_n >= d['n_min'] and p_lower_n <= d['n_max']
-        )
-    except StopIteration:
-        raise DataError(f"The n's lower p value {p_lower_n} does not fall within a data range.")
+        # Now use those to determine which group contains the midpoint.
+        n_midpoint_range = next(d for d in range_list if n_midpoint >= d['n_min'] and n_midpoint <= d['n_max'])
 
-    try:
-        p_upper_range_i, p_upper_range = next(
-            (i, d) for i, d in enumerate(range_list)
-            if p_upper_n >= d['n_min'] and p_upper_n <= d['n_max']
-        )
-    except StopIteration:
-        raise DataError(f"The n's upper p value {p_upper_n} does not fall within a data range.")
+        # How many households in the midrange are needed to reach the midpoint?
+        n_midrange_gap = n_midpoint - n_midpoint_range['n_min']
 
-    # Use these values to estimate the lower bound of the confidence interval
-    p_lower_a1 = p_lower_range['min']
-    try:
-        p_lower_a2 = range_list[p_lower_range_i + 1]['min']
-    except IndexError:
-        p_lower_a2 = p_lower_range['max']
-    p_lower_c1 = p_lower_range['n_min'] / n
-    try:
-        p_lower_c2 = range_list[p_lower_range_i + 1]['n_min'] / n
-    except IndexError:
-        p_lower_c2 = p_lower_range['n_max'] / n
-    lower_bound = ((p_lower - p_lower_c1) / (p_lower_c2 - p_lower_c1)) * (p_lower_a2 - p_lower_a1) + p_lower_a1
+        # What is the proportion of the group that would be needed to get the midpoint?
+        n_midrange_gap_percent = n_midrange_gap / n_midpoint_range['n']
 
-    # Same for the upper bound
-    p_upper_a1 = p_upper_range['min']
-    try:
-        p_upper_a2 = range_list[p_upper_range_i + 1]['min']
-    except IndexError:
-        p_upper_a2 = p_upper_range['max']
-    p_upper_c1 = p_upper_range['n_min'] / n
-    try:
-        p_upper_c2 = range_list[p_upper_range_i + 1]['n_min'] / n
-    except IndexError:
-        p_upper_c2 = p_upper_range['n_max'] / n
-    upper_bound = ((p_upper - p_upper_c1) / (p_upper_c2 - p_upper_c1)) * (p_upper_a2 - p_upper_a1) + p_upper_a1
+        # Apply this proportion to the width of the midrange
+        n_midrange_gap_adjusted = (n_midpoint_range['max'] - n_midpoint_range['min']) * n_midrange_gap_percent
 
-    # Calculate the standard error of the median
-    standard_error_median = 0.5 * (upper_bound - lower_bound)
+        # Estimate the median
+        estimated_median = n_midpoint_range['min'] + n_midrange_gap_adjusted
 
-    # Calculate the margin of error at the 90% confidence level
-    margin_of_error = 1.645 * standard_error_median
+        if not jam_values and math.isnan(n_midpoint_range['max']):
+            # Let's throw a warning
+            warnings.warn("", JamValueWarning)
+            return None, None
+
+        if not jam_values and math.isnan(n_midpoint_range['min']):
+            # Let's throw a warning
+            warnings.warn("", JamValueWarning)
+            return None, None
+
+        if math.isnan(n_midpoint_range['max']):
+            estimated_median = jam_values[1]
+
+        elif math.isnan(n_midpoint_range['min']):
+            estimated_median = jam_values[0]
+
+        # If there's no sampling percentage, we can't calculate a margin of error
+        if not sampling_percentage:
+            # Let's throw a warning, but still return the median
+            warnings.warn("", SamplingPercentageWarning)
+            return estimated_median, None
+
+        # Get the standard error for this dataset
+        standard_error = (design_factor * math.sqrt(((100 - sampling_percentage) / (n * sampling_percentage)) * (50**2))) / 100
+
+        # Use the standard error to calculate the p values
+        p_lower = .5 - standard_error
+        p_upper = .5 + standard_error
+
+        # Estimate the p_lower and p_upper n values
+        p_lower_n = n * p_lower
+        p_upper_n = n * p_upper
+
+        # Find the ranges the p values fall within
+        try:
+            p_lower_range_i, p_lower_range = next(
+                (i, d) for i, d in enumerate(range_list)
+                if p_lower_n >= d['n_min'] and p_lower_n <= d['n_max']
+            )
+        except StopIteration:
+            raise DataError(f"The n's lower p value {p_lower_n} does not fall within a data range.")
+
+        try:
+            p_upper_range_i, p_upper_range = next(
+                (i, d) for i, d in enumerate(range_list)
+                if p_upper_n >= d['n_min'] and p_upper_n <= d['n_max']
+            )
+        except StopIteration:
+            raise DataError(f"The n's upper p value {p_upper_n} does not fall within a data range.")
+
+        # Use these values to estimate the lower bound of the confidence interval
+        p_lower_a1 = p_lower_range['min']
+        try:
+            p_lower_a2 = range_list[p_lower_range_i + 1]['min']
+        except IndexError:
+            p_lower_a2 = p_lower_range['max']
+        p_lower_c1 = p_lower_range['n_min'] / n
+        try:
+            p_lower_c2 = range_list[p_lower_range_i + 1]['n_min'] / n
+        except IndexError:
+            p_lower_c2 = p_lower_range['n_max'] / n
+        lower_bound = ((p_lower - p_lower_c1) / (p_lower_c2 - p_lower_c1)) * (p_lower_a2 - p_lower_a1) + p_lower_a1
+
+        # Same for the upper bound
+        p_upper_a1 = p_upper_range['min']
+        try:
+            p_upper_a2 = range_list[p_upper_range_i + 1]['min']
+        except IndexError:
+            p_upper_a2 = p_upper_range['max']
+        p_upper_c1 = p_upper_range['n_min'] / n
+        try:
+            p_upper_c2 = range_list[p_upper_range_i + 1]['n_min'] / n
+        except IndexError:
+            p_upper_c2 = p_upper_range['n_max'] / n
+        upper_bound = ((p_upper - p_upper_c1) / (p_upper_c2 - p_upper_c1)) * (p_upper_a2 - p_upper_a1) + p_upper_a1
+
+        # Calculate the standard error of the median
+        standard_error_median = 0.5 * (upper_bound - lower_bound)
+
+        # Calculate the margin of error at the 90% confidence level
+        margin_of_error = 1.645 * standard_error_median
 
     # Return the result
     return estimated_median, margin_of_error
@@ -433,7 +510,8 @@ def approximate_mean(range_list, simulations=50, pareto=False):
                 * n (int): The number of people, households or other units in the range
                 * moe (float): The margin of error for n
         simulations (int): number of simulations to run, used to estimate margin of error. Defaults to 50.
-        pareto (logical): Set True to use the Pareto distribution to simulate values in upper bin. Set False to assume a uniform distribution. Pareto is often appropriate for income. Defaults to False.
+        pareto (logical): Set True to use the Pareto distribution to simulate values in upper bin.
+        Set False to assume a uniform distribution. Pareto is often appropriate for income. Defaults to False.
 
     Returns:
         A two-item tuple with the mean followed by the approximated margin of error.

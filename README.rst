@@ -55,20 +55,9 @@ Accepts an open-ended set of paired lists, each expected to provide an estimate 
 Approximating means
 ~~~~~~~~~~~~~~~~~~~
 
-Estimate a mean and approximate the margin of error. 
-    
-The Census Bureau guidelines do not provide instructions for approximating a mean using data from the ACS.
-They do provide guidance for approximating a mean with data `from the PUMS <https://www2.census.gov/programs-surveys/acs/tech_docs/pums/accuracy/2013_2017AccuracyPUMS.pdf?#>`_.
-Instead, we implement a simulation based approach. 
-    
-First the number of units in each bin is simulated (assuming a normal distribution around the estimate). Then for each unit a value within
-the bin is simulated (assuming a uniform distribution within each bin). Note that for quantities, such as income, the Pareto distribution is
-`often used <https://www2.census.gov/ces/wp/2014/CES-WP-14-21.pdf>`_ instead of the uniform distribution in the upper-most bin. We provide an
-option to do this (`pareto = True`). We can then calculate the mean directly from the simulated data. We repeat the simulation many times to
-calculate an empirical margin of error.
-  
-Note that this function assumes you have a lower bound for the smallest bin and an upper bound for the largest bin. We recommend trying different
-lower and upper bounds to assess the sensitivity of the resulting mean to your assumptions.
+Estimate a mean and approximate the margin of error.
+
+The Census Bureau guidelines do not provide instructions for approximating a mean using data from the ACS. Instead, we implement our own simulation-based approach.
 
 Expects a list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have four keys:
 
@@ -86,38 +75,55 @@ Expects a list of dictionaries that divide the full range of data values into co
   * - moe
     - The margin of error for the number of units in the range
 
-Also expects the number of simulations to run (default = 50). Due to the stochastic nature of the simulation approach, you will need to set a
-seed before running this function to ensure replicability. If you do not set the seed, another call of the function with the same inputs is not
-guaranteed to return the same answer. Note that due to the simulation, this function takes some time to run. The example takes a little over a minute. 
-Increasing the number of runs should increase your precision (with diminishing returns) at the cost of a slower run time.
+.. code-block:: python
 
+    >>> income = [
+        dict(min=0, max=9999, n=7942251, moe=17662),
+        dict(min=10000, max=14999, n=5768114, moe=16409),
+        dict(min=15000, max=19999, n=5727180, moe=16801),
+        dict(min=20000, max=24999, n=5910725, moe=17864),
+        dict(min=25000, max=29999, n=5619002, moe=16113),
+        dict(min=30000, max=34999, n=5711286, moe=15891),
+        dict(min=35000, max=39999, n=5332778, moe=16488),
+        dict(min=40000, max=44999, n=5354520, moe=15415),
+        dict(min=45000, max=49999, n=4725195, moe=16890),
+        dict(min=50000, max=59999, n=9181800, moe=20965),
+        dict(min=60000, max=74999, n=11818514, moe=30723),
+        dict(min=75000, max=99999, n=14636046, moe=49159),
+        dict(min=100000, max=124999, n=10273788, moe=47842),
+        dict(min=125000, max=149999, n=6428069, moe=37952),
+        dict(min=150000, max=199999, n=6931136, moe=37236),
+        dict(min=200000, max=1000000, n=7465517, moe=42206)
+    ]
+    >>> approximate_mean(income)
+    (98045.44530685373, 194.54892406267754)
+
+Note that this function expects you to submit a lower bound for the smallest bin and an upper bound for the largest bin. This is often not available for ACS datasets like income. We recommend experimenting with different lower and upper bounds to assess its effect on the resulting mean.
+
+By default the simulation is run 50 times, which can take as long as a minute. The number of simulations can be changed by setting the `simulation` keyword argument.
 
 .. code-block:: python
 
- >>> income = [
-            dict(min=0, max=9999, n=7942251, moe=17662),
-            dict(min=10000, max=14999, n=5768114, moe=16409),
-            dict(min=15000, max=19999, n=5727180, moe=16801),
-            dict(min=20000, max=24999, n=5910725, moe=17864),
-            dict(min=25000, max=29999, n=5619002, moe=16113),
-            dict(min=30000, max=34999, n=5711286, moe=15891),
-            dict(min=35000, max=39999, n=5332778, moe=16488),
-            dict(min=40000, max=44999, n=5354520, moe=15415),
-            dict(min=45000, max=49999, n=4725195, moe=16890),
-            dict(min=50000, max=59999, n=9181800, moe=20965),
-            dict(min=60000, max=74999, n=11818514, moe=30723),
-            dict(min=75000, max=99999, n=14636046, moe=49159),
-            dict(min=100000, max=124999, n=10273788, moe=47842),
-            dict(min=125000, max=149999, n=6428069, moe=37952),
-            dict(min=150000, max=199999, n=6931136, moe=37236),
-            dict(min=200000, max=1000000, n=7465517, moe=42206)
-        ]
- >>> approximate_mean(income)
- (98045.44530685373, 194.54892406267754)
- 
- >>> approximate_mean(income, pareto=True)
- (60364.96525340687, 58.60735554621351)
+     >>> approximate_mean(income, simulations=10)
 
+The simulation assumes a uniform distribution of values within each bin. In some cases, like income, it is common to assume the `Pareto distribution <https://en.wikipedia.org/wiki/Pareto_distribution>`_ in the highest bin. You can employ it here by passing `True` to the `pareto` keyword argument.
+
+.. code-block:: python
+
+     >>> approximate_mean(income, pareto=True)
+     (60364.96525340687, 58.60735554621351)
+
+Also, due to the stochastic nature of the simulation approach, you will need to set a seed before running this function to ensure replicability.
+
+.. code-block:: python
+
+     >>> import numpy
+     >>> numpy.random.seed(711355)
+     >>> approximate_mean(income, pareto=True)
+     (60364.96525340687, 58.60735554621351)
+     >>> numpy.random.seed(711355)
+     >>> approximate_mean(income, pareto=True)
+     (60364.96525340687, 58.60735554621351)
 
 
 Approximating medians

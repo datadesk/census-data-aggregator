@@ -413,25 +413,27 @@ def approximate_mean(range_list, simulations=50, pareto=False):
     Estimate a mean and approximate the margin of error.
 
     The Census Bureau guidelines do not provide instructions for
-    approximating a mean using data from the ACS. They do provide guidance for approximating a mean with data `from the PUMS`_.
-    Instead, we implement a simulation based approach.
+    approximating a mean using data from the ACS.
+
+    Instead, we implement our own simulation-based approach.
 
     Due to the stochastic nature of the simulation approach, you will need to set
     a seed before running this function to ensure replicability.
 
-    Note that this function assumes you have a lower bound for the smallest
-    bin and an upper bound for the largest bin. We recommend trying different lower and upper bounds to assess the sensitivity of the
-    resulting mean to your assumptions.
+    Note that this function expects you to submit a lower bound for the smallest
+    bin and an upper bound for the largest bin. This is often not available for
+    ACS datasets like income. We recommend experimenting with different
+    lower and upper bounds to assess its effect on the resulting mean.
 
     Args:
         range_list (list): A list of dictionaries that divide the full range of data values into continuous categories.
             Each dictionary should have four keys:
                 * min (int): The minimum value of the range
                 * max (int): The maximum value of the range
-                * n (int): The number of people, households or other unit in the range
+                * n (int): The number of people, households or other units in the range
                 * moe (float): The margin of error for n
         simulations (int): number of simulations to run, used to estimate margin of error. Defaults to 50.
-        pareto (logical): use the Pareto distribution to simulate from in upper bin, otherwise use uniform. Pareto is appropriate for income. Defaults to False.
+        pareto (logical): Set True to use the Pareto distribution to simulate values in upper bin. Set False to assume a uniform distribution. Pareto is often appropriate for income. Defaults to False.
 
     Returns:
         A two-item tuple with the mean followed by the approximated margin of error.
@@ -463,11 +465,7 @@ def approximate_mean(range_list, simulations=50, pareto=False):
         (98045.44530685373, 194.54892406267754)
         >>> approximate_mean(income, pareto=True)
         (60364.96525340687, 58.60735554621351)
-
-    ... _from the PUMS:
-    https://www2.census.gov/programs-surveys/acs/tech_docs/pums/accuracy/2013_2017AccuracyPUMS.pdf?#
     """
-
     # Sort the list
     range_list.sort(key=lambda x: x['min'])
 

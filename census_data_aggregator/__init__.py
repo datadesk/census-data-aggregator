@@ -301,6 +301,9 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
         # Calculate the margin of error at the 90% confidence level
         margin_of_error = 1.645 * standard_error_median
 
+        if math.isnan(margin_of_error):
+            margin_of_error = None
+
     # Return the result
     return estimated_median, margin_of_error
 

@@ -170,11 +170,11 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
 
             if math.isnan(n_midpoint_range['max']) and not jam_values:
                 # Let's throw a warning
-                warnings.warn("", JamValueWarning)
+                # warnings.warn("", JamValueWarning)
                 simulation_results.append(math.nan)  # does it make sense to average these?
             elif math.isnan(n_midpoint_range['min']) and not jam_values:
                 # Let's throw a warning
-                warnings.warn("", JamValueWarning)
+                # warnings.warn("", JamValueWarning)
                 simulation_results.append(math.nan)  # does it make sense to average these?
             elif math.isnan(n_midpoint_range['max']):  # already exhausted the no jam value case
                 estimated_median = jam_values[1]
@@ -185,10 +185,20 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
             else:
                 simulation_results.append(estimated_median)
 
-        estimated_median = numpy.nanmean(simulation_results)  # should this be median of medians instead?
-        t1 = numpy.nanquantile(simulation_results, 0.95) - estimated_median  # go from confidence interval to margin of error
-        t2 = estimated_median - numpy.nanquantile(simulation_results, 0.05)  # go from confidence interval to margin of error
-        margin_of_error = max(t1, t2)   # if asymmetrical take bigger one, conservative
+        if math.nan in simulation_results:
+            estimated_median = None
+            margin_of_error = None
+        elif jam_values and jam_values[0] in simulation_results:
+            estimated_median = None
+            margin_of_error = None
+        elif jam_values and jam_values[1] in simulation_results:
+            estimated_median = None
+            margin_of_error = None
+        else:
+            estimated_median = numpy.nanmean(simulation_results)  # mean of medians
+            t1 = numpy.nanquantile(simulation_results, 0.95) - estimated_median  # go from confidence interval to margin of error
+            t2 = estimated_median - numpy.nanquantile(simulation_results, 0.05)  # go from confidence interval to margin of error
+            margin_of_error = max(t1, t2)   # if asymmetrical take bigger one, conservative
     # get the median and moe via census approximation
     else:
         # For each range calculate its min and max value along the universe's scale

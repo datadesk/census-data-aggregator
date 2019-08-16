@@ -131,7 +131,7 @@ Approximating medians
 
 Estimate a median and approximate the margin of error. Follows the U.S. Census Bureau's official guidelines for estimation. Useful for generating medians for measures like household income and age when aggregating census geographies.
 
-Expects a list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have three keys:
+Expects a list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have three keys with an optional fourth key for margin of error inputs:
 
 .. list-table::
   :header-rows: 1
@@ -139,11 +139,13 @@ Expects a list of dictionaries that divide the full range of data values into co
   * - key
     - value
   * - min
-    - The minimum value of the range
+    - The minimum value of the range (if unknown use `math.nan`)
   * - max
-    - The maximum value of the range
+    - The maximum value of the range (if unknown use `math.nan`)
   * - n
     - The number of people, households or other units in the range
+  * - moe (optional)
+    - The `n` value's associated margin of error
 
 
 .. code-block:: python
@@ -195,8 +197,15 @@ If you do not provide the value to the function, no margin of error will be retu
   >>> census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs1)
   70065.84266055046, None
 
-If the data being approximated comes from PUMS, an additional design factor must also be provided. The design factor is a statistical input used to tailor the estimate to the variance of the dataset. Find the value for the dataset you are estimating by referring to `the bureau's reference material <https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html>`_.
+If the data being approximated comes from PUMS, an additional design factor must also be provided. 
+The design factor is a statistical input used to tailor the estimate to the variance of the dataset. 
+Find the value for the dataset you are estimating by referring to `the bureau's reference material <https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html>`_.
 
+If you have an associated "jam values" for your dataset provided in the `American Community Survey's technical documentation <https://www.documentcloud.org/documents/6165752-2017-SummaryFile-Tech-Doc.html#document/p20/a508561>`_, input the pair as a list to the `jam_values` keyword argument. 
+Then if the median falls in the first or last bin, the jam value will be returned instead of `None`.
+        
+If the `n` values have an associated margin of error, a simulation based approach will be used to estimate the new margin of error. The `simulations` keyword argument controls the number of simulations to run and defaults to 50.
+Jam values will not be used in the simulation approach. If the estimated median falls in the lower or upper bin, the estimate returned will be `None`.
 
 Approximating percent change
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

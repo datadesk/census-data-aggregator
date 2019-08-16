@@ -71,12 +71,11 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
     Args:
         range_list (list): A list of dictionaries that divide the full range of data values into continuous categories.
             Each dictionary should have three keys:
-                * min (int): The minimum value of the range
-                * max (int): The maximum value of the range
+                * min (int): The minimum value of the range. If unknown use `math.nan`.
+                * max (int): The maximum value of the range. If unknown use `math.nan`.
                 * n (int): The number of people, households or other unit in the range
-            The minimum value in the first range and the maximum value in the last range
-            can be tailored to the dataset by using the "jam values" provided in
-            the `American Community Survey's technical documentation`_.
+                * moe (float, optional): If the `n` value has an associated margin of error, include it to contribute
+                to the new margin of error calculation.
         design_factor (float, optional): A statistical input used to tailor the standard error to the
             variance of the dataset. This is only needed for data coming from public use microdata sample,
             also known as PUMS. You do not need to provide this input if you are approximating
@@ -89,7 +88,11 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
             * Three-year ACS: 7.5
             * Five-year ACS: 12.5
          If you do not provide this input, a margin of error will not be returned.
-
+         jam_values (list, optional): If you have an associated "jam values" for your dataset provided in
+            the `American Community Survey's technical documentation`_ input the pair as a list. If the median falls
+            in the first or last bin, the jam value will be returned instead of `None`.
+        simulations (integer, optional): If the `n` values have an associated margin of error, a simulation based approach
+        will be used to estimate the new margin of error. This input controls the number of simulations to run. Defaults to 50.
     Returns:
         A two-item tuple with the median followed by the approximated margin of error.
 

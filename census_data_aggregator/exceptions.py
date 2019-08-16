@@ -9,6 +9,13 @@ class DataError(Exception):
     pass
 
 
+class InputError(Exception):
+    """
+    Raised if jam value input is invalid.
+    """
+    pass
+
+
 class SamplingPercentageWarning(Warning):
     """
     Warns that you have not provided a design factor.

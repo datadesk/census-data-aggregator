@@ -4,7 +4,7 @@ from __future__ import division
 import math
 import numpy
 import warnings
-from .exceptions import DataError, SamplingPercentageWarning, JamValueMissingWarning, JamValueResultWarning, JamValueResultMOEWarning
+from .exceptions import DataError, InputError, SamplingPercentageWarning, JamValueMissingWarning, JamValueResultWarning, JamValueResultMOEWarning
 
 
 def approximate_sum(*pairs):
@@ -250,7 +250,10 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
 
         if math.isnan(n_midpoint_range['max']):
             warnings.warn("", JamValueResultWarning)
-            estimated_median = jam_values[1]
+            if len(jam_values) < 2:
+                raise InputError(f"An upper jam value input is needed")
+            else:
+                estimated_median = jam_values[1]
 
         elif math.isnan(n_midpoint_range['min']):
             warnings.warn("", JamValueResultWarning)

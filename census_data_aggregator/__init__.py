@@ -168,23 +168,28 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
             # Estimate the median
             estimated_median = n_midpoint_range['min'] + n_midrange_gap_adjusted
 
+            #  median in last bin but no jam value input
             if math.isnan(n_midpoint_range['max']) and not jam_values:
-                # Let's throw a warning
+                # don't need warning because jam value won't appear
                 # warnings.warn("", JamValueWarning)
-                simulation_results.append(math.nan)  # does it make sense to average these?
+                simulation_results.append(math.nan)  # return nan
+            #  median in first bin but not jam value input
             elif math.isnan(n_midpoint_range['min']) and not jam_values:
-                # Let's throw a warning
+                # don't need warning because jam value won't appear
                 # warnings.warn("", JamValueWarning)
-                simulation_results.append(math.nan)  # does it make sense to average these?
+                simulation_results.append(math.nan)  # return nan
+            #  median in last bin and jam value given
             elif math.isnan(n_midpoint_range['max']):  # already exhausted the no jam value case
                 estimated_median = jam_values[1]
                 simulation_results.append(estimated_median)
+            #  median in first bin and jam value given
             elif math.isnan(n_midpoint_range['min']):  # already exhausted the no jam value case
                 estimated_median = jam_values[0]
                 simulation_results.append(estimated_median)
+            #  median is fine
             else:
                 simulation_results.append(estimated_median)
-
+        #  if jam values are involved, doesn't make sense to take a mean, return None
         if math.nan in simulation_results:
             estimated_median = None
             margin_of_error = None
@@ -194,6 +199,7 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
         elif jam_values and jam_values[1] in simulation_results:
             estimated_median = None
             margin_of_error = None
+        #  if jam values aren't involved, proceed as normal
         else:
             estimated_median = numpy.nanmean(simulation_results)  # mean of medians
             t1 = numpy.nanquantile(simulation_results, 0.95) - estimated_median  # go from confidence interval to margin of error

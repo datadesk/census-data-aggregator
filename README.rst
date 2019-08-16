@@ -207,6 +207,32 @@ Then if the median falls in the first or last bin, the jam value will be returne
 If the `n` values have an associated margin of error, a simulation based approach will be used to estimate the new margin of error. The `simulations` keyword argument controls the number of simulations to run and defaults to 50.
 Jam values will not be used in the simulation approach. If the estimated median falls in the lower or upper bin, the estimate returned will be `None`.
 
+
+.. code-block:: python
+
+     >>> moe_example = [
+            dict(min=math.nan, max=9999, n=6, moe=1),
+            dict(min=10000, max=14999, n=1, moe=1),
+            dict(min=15000, max=19999, n=8, moe=1),
+            dict(min=20000, max=24999, n=7, moe=1),
+            dict(min=25000, max=29999, n=2, moe=1),
+            dict(min=30000, max=34999, n=900, moe=8),
+            dict(min=35000, max=39999, n=7, moe=1),
+            dict(min=40000, max=44999, n=4, moe=1),
+            dict(min=45000, max=49999, n=8, moe=1),
+            dict(min=50000, max=59999, n=6, moe=1),
+            dict(min=60000, max=74999, n=7, moe=1),
+            dict(min=75000, max=99999, n=2, moe=0.25),
+            dict(min=100000, max=124999, n=7, moe=1),
+            dict(min=125000, max=149999, n=10, moe=1),
+            dict(min=150000, max=199999, n=8, moe=1),
+            dict(min=200000, max=math.nan, n=18, moe=10)
+        ]
+     >>> import numpy
+     >>> numpy.random.seed(711355)
+     >>> approximate_median(moe_example, design_factor=1, sampling_percentage=5*2.5, simulations=50, jam_values=[2499, 200001])
+     (32644.851568840597, 33.0019114324823)
+
 Approximating percent change
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -7,7 +7,10 @@ import numpy
 import math
 from census_data_aggregator.exceptions import (
     DataError,
-    SamplingPercentageWarning
+    SamplingPercentageWarning,
+    JamValueMissingWarning,
+    JamValueResultWarning,
+    JamValueResultMOEWarning
 )
 
 
@@ -117,6 +120,7 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             (70065.84266055046, 3850.680465234964)
         )
         
+
         household_income_2013_acs5 = [
             dict(min=2499, max=9999, n=186),
             dict(min=10000, max=14999, n=78),
@@ -139,7 +143,8 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
         self.assertAlmostEqual(estimate, 42211.096153846156)
         self.assertAlmostEqual(moe, 4706.522752733644)
         
-        household_income_2013_acs5 = [
+        with self.assertWarns(JamValueMissingWarning):
+            household_income_2013_acs5 = [
             dict(min=math.nan, max=9999, n=186),
             dict(min=10000, max=14999, n=1),
             dict(min=15000, max=19999, n=8),
@@ -156,17 +161,36 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             dict(min=125000, max=149999, n=10),
             dict(min=150000, max=199999, n=8),
             dict(min=200000, max=250001, n=8)
-        ]
+            ]
+            estimate, moe = census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5, jam_values=None, simulations=50)
+            self.assertEqual(estimate, None)
+            self.assertEqual(moe, None)
+            
+        with self.assertWarns(JamValueResultWarning):
+            household_income_2013_acs5 = [
+            dict(min=math.nan, max=9999, n=186),
+            dict(min=10000, max=14999, n=1),
+            dict(min=15000, max=19999, n=8),
+            dict(min=20000, max=24999, n=7),
+            dict(min=25000, max=29999, n=2),
+            dict(min=30000, max=34999, n=90),
+            dict(min=35000, max=39999, n=7),
+            dict(min=40000, max=44999, n=4),
+            dict(min=45000, max=49999, n=8),
+            dict(min=50000, max=59999, n=6),
+            dict(min=60000, max=74999, n=7),
+            dict(min=75000, max=99999, n=2),
+            dict(min=100000, max=124999, n=7),
+            dict(min=125000, max=149999, n=10),
+            dict(min=150000, max=199999, n=8),
+            dict(min=200000, max=250001, n=8)
+            ]
+            estimate, moe = census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5, simulations=50,jam_values=[2599])
+            self.assertEqual(estimate, 2599)
+            self.assertEqual(moe, None)
         
-        estimate, moe = census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5, jam_values=None, simulations=50)
-        self.assertEqual(estimate, None)
-        self.assertEqual(moe, None)
-        
-        estimate, moe = census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5, simulations=50,jam_values=[2599])
-        self.assertEqual(estimate, 2599)
-        self.assertEqual(moe, None)
-        
-        household_income_2013_acs5 = [
+        with self.assertWarns(JamValueResultWarning):
+            household_income_2013_acs5 = [
             dict(min=math.nan, max=9999, n=6),
             dict(min=10000, max=14999, n=1),
             dict(min=15000, max=19999, n=8),
@@ -183,13 +207,13 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             dict(min=125000, max=149999, n=10),
             dict(min=150000, max=199999, n=8),
             dict(min=200000, max=math.nan, n=186)
-        ]
+            ]
+            estimate, moe = census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5, simulations=50,jam_values=[2599, 200001])
+            self.assertEqual(estimate, 200001)
+            self.assertEqual(moe, None)
         
-        estimate, moe = census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5, simulations=50,jam_values=[2599, 200001])
-        self.assertEqual(estimate, 200001)
-        self.assertEqual(moe, None)
-        
-        household_income_2013_acs5 = [
+        with self.assertWarns(JamValueResultMOEWarning):
+            household_income_2013_acs5 = [
             dict(min=math.nan, max=9999, n=6, moe=1),
             dict(min=10000, max=14999, n=1, moe=1),
             dict(min=15000, max=19999, n=8, moe=1),
@@ -206,15 +230,15 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
             dict(min=125000, max=149999, n=10, moe=1),
             dict(min=150000, max=199999, n=8, moe=1),
             dict(min=200000, max=math.nan, n=186, moe=10)
-        ]
+            ]
+            estimate, moe = census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5, simulations=50,jam_values=[2599, 200001])
+            self.assertEqual(estimate, None)
+            self.assertEqual(moe, None)
         
-        estimate, moe = census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5, simulations=50,jam_values=[2599, 200001])
-        self.assertEqual(estimate, None)
-        self.assertEqual(moe, None)
-        
-        estimate, moe = census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5, simulations=50,jam_values=None)
-        self.assertEqual(estimate, None)
-        self.assertEqual(moe, None)
+        with self.assertWarns(JamValueMissingWarning):
+            estimate, moe = census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5, simulations=50,jam_values=None)
+            self.assertEqual(estimate, None)
+            self.assertEqual(moe, None)
         
         household_income_2013_acs5 = [
             dict(min=math.nan, max=9999, n=6, moe=1),
@@ -238,7 +262,7 @@ class CensusErrorAnalyzerTest(unittest.TestCase):
         estimate, moe = census_data_aggregator.approximate_median(household_income_2013_acs5, design_factor=1, sampling_percentage=5*2.5, simulations=50,jam_values=None)
         self.assertAlmostEqual(estimate, 32644.851568840597)
         self.assertAlmostEqual(moe, 33.0019114324823)
-           
+        
         with self.assertWarns(SamplingPercentageWarning):
             m, moe = census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs5, design_factor=1.5)
             self.assertTrue(moe == None)

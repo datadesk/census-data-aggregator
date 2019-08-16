@@ -4,7 +4,7 @@ from __future__ import division
 import math
 import numpy
 import warnings
-from .exceptions import DataError, SamplingPercentageWarning, JamValueWarning
+from .exceptions import DataError, SamplingPercentageWarning, JamValueMissingWarning, JamValueResultWarning, JamValueResultMOEWarning
 
 
 def approximate_sum(*pairs):
@@ -191,12 +191,15 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
                 simulation_results.append(estimated_median)
         #  if jam values are involved, doesn't make sense to take a mean, return None
         if math.nan in simulation_results:
+            warnings.warn("", JamValueMissingWarning)
             estimated_median = None
             margin_of_error = None
         elif jam_values and jam_values[0] in simulation_results:
+            warnings.warn("", JamValueResultMOEWarning)
             estimated_median = None
             margin_of_error = None
         elif jam_values and jam_values[1] in simulation_results:
+            warnings.warn("", JamValueResultMOEWarning)
             estimated_median = None
             margin_of_error = None
         #  if jam values aren't involved, proceed as normal
@@ -237,18 +240,20 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
 
         if not jam_values and math.isnan(n_midpoint_range['max']):
             # Let's throw a warning
-            warnings.warn("", JamValueWarning)
+            warnings.warn("", JamValueMissingWarning)
             return None, None
 
         if not jam_values and math.isnan(n_midpoint_range['min']):
             # Let's throw a warning
-            warnings.warn("", JamValueWarning)
+            warnings.warn("", JamValueMissingWarning)
             return None, None
 
         if math.isnan(n_midpoint_range['max']):
+            warnings.warn("", JamValueResultWarning)
             estimated_median = jam_values[1]
 
         elif math.isnan(n_midpoint_range['min']):
+            warnings.warn("", JamValueResultWarning)
             estimated_median = jam_values[0]
 
         # If there's no sampling percentage, we can't calculate a margin of error

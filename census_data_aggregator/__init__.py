@@ -593,6 +593,7 @@ def approximate_mean(range_list, simulations=50, pareto=False):
             se = range_['moe'] / 1.645  # convert moe to se
             nn = round(numpy.random.normal(range_['n'], se))  # use moe to introduce randomness into number in bin
             nn = int(nn)  # clean it up
+            nn = max(0, nn)  # don't allow negative values
             simulated_values.append(numpy.random.uniform(range_['min'], range_['max'], size=(1, nn)).sum())  # draw random values within the bin, assume uniform
             simulated_n.append(nn)
         # a special case to handle the last bin
@@ -601,6 +602,7 @@ def approximate_mean(range_list, simulations=50, pareto=False):
             se = last['moe'] / 1.645  # convert moe to se
             nn = round(numpy.random.normal(last['n'], se))  # use moe to introduce randomness into number in bin
             nn = int(nn)  # clean it up
+            nn = max(0, nn)  # don't allow negative values
             simulated_values.append(numpy.random.pareto(a=alpha_hat, size=(1, nn)).sum())  # draw random values within the bin, assume uniform
             simulated_n.append(nn)
         # use uniform otherwise

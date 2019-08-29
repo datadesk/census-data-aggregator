@@ -130,9 +130,15 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
     ... _the bureau's reference material:
         https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html
     """
+    # need to replace before sort
+    for i in range(len(range_list)):
+        for k, v in range_list[i].items():
+            if v is None:
+                range_list[i][v] = math.nan
+    
     # Sort the list
     range_list.sort(key=lambda x: x['min'])
-
+                    
     # if moe is included, can use simulation to estimate margin of error for median
     if "moe" in list(range_list[0].keys()):
         simulation_results = []

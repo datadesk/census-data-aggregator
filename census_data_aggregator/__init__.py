@@ -71,8 +71,8 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
     Args:
         range_list (list): A list of dictionaries that divide the full range of data values into continuous categories.
             Each dictionary should have three keys:
-                * min (int): The minimum value of the range. If unknown use `math.nan`.
-                * max (int): The maximum value of the range. If unknown use `math.nan`.
+                * min (int): The minimum value of the range. If unknown use `None`.
+                * max (int): The maximum value of the range. If unknown use `None`.
                 * n (int): The number of people, households or other unit in the range
                 * moe (float, optional): If the `n` value has an associated margin of error, include it to contribute
                 to the new margin of error calculation.
@@ -88,7 +88,7 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
             * Three-year ACS: 7.5
             * Five-year ACS: 12.5
          If you do not provide this input, a margin of error will not be returned.
-         jam_values (list, optional): If you have an associated "jam values" for your dataset provided in
+         jam_values (list, optional): If you have associated "jam values" for your dataset provided in
             the `American Community Survey's technical documentation`_ input the pair as a list. If the median falls
             in the first or last bin, the jam value will be returned instead of `None`.
         simulations (integer, optional): If the `n` values have an associated margin of error, a simulation based approach
@@ -101,27 +101,28 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
     Examples:
         Estimating the median for a range of household incomes.
 
-        >>> household_income_2013_acs5 = [
-            dict(min=2499, max=9999, n=186),
-            dict(min=10000, max=14999, n=78),
-            dict(min=15000, max=19999, n=98),
-            dict(min=20000, max=24999, n=287),
-            dict(min=25000, max=29999, n=142),
-            dict(min=30000, max=34999, n=90),
-            dict(min=35000, max=39999, n=107),
-            dict(min=40000, max=44999, n=104),
-            dict(min=45000, max=49999, n=178),
-            dict(min=50000, max=59999, n=106),
-            dict(min=60000, max=74999, n=177),
-            dict(min=75000, max=99999, n=262),
-            dict(min=100000, max=124999, n=77),
-            dict(min=125000, max=149999, n=100),
-            dict(min=150000, max=199999, n=58),
-            dict(min=200000, max=250001, n=18)
+        >>> median_with_moe_example = [
+            dict(min=None, max=9999, n=6, moe=1),
+            dict(min=10000, max=14999, n=1, moe=1),
+            dict(min=15000, max=19999, n=8, moe=1),
+            dict(min=20000, max=24999, n=7, moe=1),
+            dict(min=25000, max=29999, n=2, moe=1),
+            dict(min=30000, max=34999, n=900, moe=8),
+            dict(min=35000, max=39999, n=7, moe=1),
+            dict(min=40000, max=44999, n=4, moe=1),
+            dict(min=45000, max=49999, n=8, moe=1),
+            dict(min=50000, max=59999, n=6, moe=1),
+            dict(min=60000, max=74999, n=7, moe=1),
+            dict(min=75000, max=99999, n=2, moe=0.25),
+            dict(min=100000, max=124999, n=7, moe=1),
+            dict(min=125000, max=149999, n=10, moe=1),
+            dict(min=150000, max=199999, n=8, moe=1),
+            dict(min=200000, max=None, n=18, moe=10)
         ]
 
-        >>> approximate_median(household_income_2013_acs5, sampling_percentage=5*2.5)
-        (42211.096153846156, 4706.522752733644)
+
+        >>> approximate_median(median_with_moe_example, sampling_percentage=2.5)
+    (32646.07020990552, 26.638686513280845)
 
     ... _official guidelines:
         https://www.documentcloud.org/documents/6165603-2013-2017AccuracyPUMS.html#document/p18
@@ -135,10 +136,8 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
         for k, v in range_list[i].items():
             if v is None:
                 range_list[i][v] = math.nan
-    
     # Sort the list
     range_list.sort(key=lambda x: x['min'])
-                    
     # if moe is included, can use simulation to estimate margin of error for median
     if "moe" in list(range_list[0].keys()):
         simulation_results = []

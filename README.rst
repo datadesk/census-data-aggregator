@@ -98,7 +98,7 @@ Expects a list of dictionaries that divide the full range of data values into co
     >>> census_data_aggregator.approximate_mean(income)
     (98045.44530685373, 194.54892406267754)
 
-Note that this function expects you to submit a lower bound for the smallest bin and an upper bound for the largest bin. This is often not available for ACS datasets like income. We recommend experimenting with different lower and upper bounds to assess its effect on the resulting mean.
+Note that, unlike `approximate_median` this function expects you to submit a lower bound for the smallest bin and an upper bound for the largest bin. This is because the Census's jam value approach is only used for median calculations. We recommend experimenting with different lower and upper bounds to assess its effect on the resulting mean.
 
 By default the simulation is run 50 times, which can take as long as a minute. The number of simulations can be changed by setting the `simulation` keyword argument.
 
@@ -131,7 +131,7 @@ Approximating medians
 
 Estimate a median and approximate the margin of error. Follows the U.S. Census Bureau's official guidelines for estimation. Useful for generating medians for measures like household income and age when aggregating census geographies.
 
-Expects a list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have three keys with an optional fourth key for margin of error inputs:
+Expects a list of dictionaries that divide the full range of data values into continuous categories. The first `min` and the last `max` should be `None` since we typically do not know the boundaries for the top and bottom bins (e.g. income). If these values are actually known (e.g. lower bound for age), the known value can replace `None.` Each dictionary should have three keys with an optional fourth key for margin of error inputs:
 
 .. list-table::
   :header-rows: 1
@@ -145,31 +145,38 @@ Expects a list of dictionaries that divide the full range of data values into co
   * - n
     - The number of people, households or other units in the range
   * - moe (optional)
-    - The `n` value's associated margin of error
+    - The `n` value's associated margin of error. If given as an input, a simulation approach will be used to estimate the new margin of error.
+    
 
 
 .. code-block:: python
 
-  >>> household_income_la_2013_acs1 = [
-      dict(min=0, max=9999, n=1382),
-      dict(min=10000, max=14999, n=2377),
-      dict(min=15000, max=19999, n=1332),
-      dict(min=20000, max=24999, n=3129),
-      dict(min=25000, max=29999, n=1927),
-      dict(min=30000, max=34999, n=1825),
-      dict(min=35000, max=39999, n=1567),
-      dict(min=40000, max=44999, n=1996),
-      dict(min=45000, max=49999, n=1757),
-      dict(min=50000, max=59999, n=3523),
-      dict(min=60000, max=74999, n=4360),
-      dict(min=75000, max=99999, n=6424),
-      dict(min=100000, max=124999, n=5257),
-      dict(min=125000, max=149999, n=3485),
-      dict(min=150000, max=199999, n=2926),
-      dict(min=200000, max=500000, n=4215)
-  ]
+  >>> median_with_moe_example = [
+            dict(min=None, max=9999, n=6, moe=1),
+            dict(min=10000, max=14999, n=1, moe=1),
+            dict(min=15000, max=19999, n=8, moe=1),
+            dict(min=20000, max=24999, n=7, moe=1),
+            dict(min=25000, max=29999, n=2, moe=1),
+            dict(min=30000, max=34999, n=900, moe=8),
+            dict(min=35000, max=39999, n=7, moe=1),
+            dict(min=40000, max=44999, n=4, moe=1),
+            dict(min=45000, max=49999, n=8, moe=1),
+            dict(min=50000, max=59999, n=6, moe=1),
+            dict(min=60000, max=74999, n=7, moe=1),
+            dict(min=75000, max=99999, n=2, moe=0.25),
+            dict(min=100000, max=124999, n=7, moe=1),
+            dict(min=125000, max=149999, n=10, moe=1),
+            dict(min=150000, max=199999, n=8, moe=1),
+            dict(min=200000, max=None, n=18, moe=10)
+        ]
 
-For a margin of error to be returned, a sampling percentage must be provided to calculate the standard error. The sampling percentage represents what proportion of the population that participated in the survey. Here are the values for some common census surveys.
+
+.. code-block:: python
+
+    >>> census_data_aggregator.approximate_median(median_with_moe_example, sampling_percentage=2.5)
+    (32646.07020990552, 26.638686513280845)
+
+In the case without margin of error inputs, a sampling percentage must be provided to in order for a margin of error to be returned. The sampling percentage represents what proportion of the population that participated in the survey. Here are the values for some common census surveys.
 
 .. list-table::
   :header-rows: 1
@@ -185,17 +192,31 @@ For a margin of error to be returned, a sampling percentage must be provided to 
   * - Five-year ACS
     - 12.5
 
-.. code-block:: python
-
-    >>> census_data_aggregator.approximate_median(household_income_la_2013_acs1, sampling_percentage=2.5)
-    70065.84266055046, 3850.680465234964
-
-If you do not provide the value to the function, no margin of error will be returned.
+If you do not provide the sampling percentage value to the function, no margin of error will be returned.
 
 .. code-block:: python
 
-  >>> census_data_aggregator.approximate_median(household_income_la_2013_acs1)
-  70065.84266055046, None
+  >>> median_without_moe_example = [
+            dict(min=None, max=9999, n=6),
+            dict(min=10000, max=14999, n=1),
+            dict(min=15000, max=19999, n=8),
+            dict(min=20000, max=24999, n=7),
+            dict(min=25000, max=29999, n=2),
+            dict(min=30000, max=34999, n=900),
+            dict(min=35000, max=39999, n=7),
+            dict(min=40000, max=44999, n=4),
+            dict(min=45000, max=49999, n=8),
+            dict(min=50000, max=59999, n=6),
+            dict(min=60000, max=74999, n=7),
+            dict(min=75000, max=99999, n=2),
+            dict(min=100000, max=124999, n=7),
+            dict(min=125000, max=149999, n=10),
+            dict(min=150000, max=199999, n=8),
+            dict(min=200000, max=None, n=18)
+        ]
+
+  >>> census_data_aggregator.approximate_median(median_without_moe_example)
+  32646.69277777778, None
 
 If the data being approximated comes from PUMS, an additional design factor must also be provided. 
 The design factor is a statistical input used to tailor the estimate to the variance of the dataset. 
@@ -203,6 +224,30 @@ Find the value for the dataset you are estimating by referring to `the bureau's 
 
 If you have an associated "jam values" for your dataset provided in the `American Community Survey's technical documentation <https://www.documentcloud.org/documents/6165752-2017-SummaryFile-Tech-Doc.html#document/p20/a508561>`_, input the pair as a list to the `jam_values` keyword argument. 
 Then if the median falls in the first or last bin, the jam value will be returned instead of `None`.
+
+.. code-block:: python
+
+     >>> jam_without_simulation = [
+            dict(min=None, max=9999, n=6),
+            dict(min=10000, max=14999, n=1),
+            dict(min=15000, max=19999, n=8),
+            dict(min=20000, max=24999, n=7),
+            dict(min=25000, max=29999, n=2),
+            dict(min=30000, max=34999, n=9),
+            dict(min=35000, max=39999, n=7),
+            dict(min=40000, max=44999, n=4),
+            dict(min=45000, max=49999, n=8),
+            dict(min=50000, max=59999, n=6),
+            dict(min=60000, max=74999, n=7),
+            dict(min=75000, max=99999, n=2),
+            dict(min=100000, max=124999, n=7),
+            dict(min=125000, max=149999, n=10),
+            dict(min=150000, max=199999, n=8),
+            dict(min=200000, max=None, n=186)
+        ]
+     >>> import numpy
+     >>> census_data_aggregator.approximate_median(jam_without_simulation, sampling_percentage=5*2.5,jam_values=[2599, 200001])
+     (200001, None)
         
 If the `n` values have an associated margin of error, a simulation based approach will be used to estimate the new margin of error. The `simulations` keyword argument controls the number of simulations to run and defaults to 50.
 Jam values will not be used in the simulation approach. If the estimated median falls in the lower or upper bin, the estimate returned will be `None`.
@@ -210,13 +255,13 @@ Jam values will not be used in the simulation approach. If the estimated median 
 
 .. code-block:: python
 
-     >>> moe_example = [
-            dict(min=math.nan, max=9999, n=6, moe=1),
+     >>> simulation_with_jam = [
+            dict(min=None, max=9999, n=6, moe=1),
             dict(min=10000, max=14999, n=1, moe=1),
             dict(min=15000, max=19999, n=8, moe=1),
             dict(min=20000, max=24999, n=7, moe=1),
             dict(min=25000, max=29999, n=2, moe=1),
-            dict(min=30000, max=34999, n=900, moe=8),
+            dict(min=30000, max=34999, n=90, moe=8),
             dict(min=35000, max=39999, n=7, moe=1),
             dict(min=40000, max=44999, n=4, moe=1),
             dict(min=45000, max=49999, n=8, moe=1),
@@ -226,12 +271,11 @@ Jam values will not be used in the simulation approach. If the estimated median 
             dict(min=100000, max=124999, n=7, moe=1),
             dict(min=125000, max=149999, n=10, moe=1),
             dict(min=150000, max=199999, n=8, moe=1),
-            dict(min=200000, max=math.nan, n=18, moe=10)
+            dict(min=200000, max=None, n=186, moe=10)
         ]
      >>> import numpy
-     >>> numpy.random.seed(711355)
-     >>> census_data_aggregator.approximate_median(moe_example, design_factor=1, sampling_percentage=5*2.5, simulations=50, jam_values=[2499, 200001])
-     (32644.851568840597, 33.0019114324823)
+     >>> census_data_aggregator.approximate_median(simulation_with_jam, simulations=50, jam_values=[2499, 200001])
+     (None, None)
 
 Approximating percent change
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

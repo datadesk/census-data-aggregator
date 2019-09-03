@@ -135,7 +135,7 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None, ja
     for i in range(len(range_list)):
         for k, v in range_list[i].items():
             if v is None:
-                range_list[i][v] = math.nan
+                range_list[i][k] = math.nan
     # Sort the list
     range_list.sort(key=lambda x: x['min'])
     # if moe is included, can use simulation to estimate margin of error for median

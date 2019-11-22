@@ -433,7 +433,8 @@ def approximate_mean(range_list, simulations=50, pareto=False):
                 * n (int): The number of people, households or other units in the range
                 * moe (float): The margin of error for n
         simulations (int): number of simulations to run, used to estimate margin of error. Defaults to 50.
-        pareto (logical): Set True to use the Pareto distribution to simulate values in upper bin. Set False to assume a uniform distribution. Pareto is often appropriate for income. Defaults to False.
+        pareto (logical): Set True to use the Pareto distribution to simulate values in upper bin. 
+            Set False to assume a uniform distribution. Pareto is often appropriate for income. Defaults to False.
 
     Returns:
         A two-item tuple with the mean followed by the approximated margin of error.

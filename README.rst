@@ -246,7 +246,7 @@ Accepts two paired lists, each expected to provide an estimate followed by its m
 .. code-block:: python
 
   >>> single_women_in_virginia = 203119, 5070
-  >>> total_women_in_virginia = 690746, 831
+  >>> total_women_in_virginia = 630498, 831
   >>> census_data_aggregator.approximate_proportion(
       single_women_in_virginia,
       total_women_in_virginia

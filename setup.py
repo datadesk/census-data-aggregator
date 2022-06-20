@@ -46,7 +46,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Ben Welsh",
     author_email="b@palewi.re",
-    url="http://www.github.com/datadesk/census-data-aggregator",
+    url="https://palewi.re/docs/census-data-aggregator/",
     license="MIT",
     packages=("census_data_aggregator",),
     install_requires=[

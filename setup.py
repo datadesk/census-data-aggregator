@@ -42,7 +42,8 @@ def local_version(version):
 setup(
     name="census-data-aggregator",
     description="Combine U.S. census data responsibly",
-    long_description=read("README.rst"),
+    long_description=read("README.md"),
+    long_description_content_type="text/markdown",
     author="Ben Welsh",
     author_email="b@palewi.re",
     url="http://www.github.com/datadesk/census-data-aggregator",

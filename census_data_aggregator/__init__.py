@@ -1,6 +1,8 @@
 import math
-import numpy
 import warnings
+
+import numpy
+
 from .exceptions import DataError, SamplingPercentageWarning
 
 
@@ -40,7 +42,7 @@ def approximate_sum(*pairs):
     # So if there are zeros...
     if len(zeros) > 1:
         # ... weed them out
-        max_zero_margin = max([p[1] for p in zeros])
+        max_zero_margin = max(p[1] for p in zeros)
         not_zero_margins = [p[1] for p in pairs if p[0] != 0]
         margins = [max_zero_margin] + not_zero_margins
     # If not, just keep all the input margins
@@ -48,10 +50,10 @@ def approximate_sum(*pairs):
         margins = [p[1] for p in pairs]
 
     # Calculate the margin using the bureau's official formula
-    margin_of_error = math.sqrt(sum([m**2 for m in margins]))
+    margin_of_error = math.sqrt(sum(m**2 for m in margins))
 
     # Calculate the total
-    total = sum([p[0] for p in pairs])
+    total = sum(p[0] for p in pairs)
 
     # Return the results
     return total, margin_of_error
@@ -123,35 +125,39 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
         https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html
     """
     # Sort the list
-    range_list.sort(key=lambda x: x['min'])
+    range_list.sort(key=lambda x: x["min"])
 
     # For each range calculate its min and max value along the universe's scale
     cumulative_n = 0
     for range_ in range_list:
-        range_['n_min'] = cumulative_n
-        cumulative_n += range_['n']
-        range_['n_max'] = cumulative_n
+        range_["n_min"] = cumulative_n
+        cumulative_n += range_["n"]
+        range_["n_max"] = cumulative_n
 
     # What is the total number of observations in the universe?
-    n = sum([d['n'] for d in range_list])
+    n = sum(d["n"] for d in range_list)
 
     # What is the estimated midpoint of the n?
     n_midpoint = n / 2.0
 
     # Now use those to determine which group contains the midpoint.
-    n_midpoint_range = next(d for d in range_list if n_midpoint >= d['n_min'] and n_midpoint <= d['n_max'])
+    n_midpoint_range = next(
+        d for d in range_list if n_midpoint >= d["n_min"] and n_midpoint <= d["n_max"]
+    )
 
     # How many households in the midrange are needed to reach the midpoint?
-    n_midrange_gap = n_midpoint - n_midpoint_range['n_min']
+    n_midrange_gap = n_midpoint - n_midpoint_range["n_min"]
 
     # What is the proportion of the group that would be needed to get the midpoint?
-    n_midrange_gap_percent = n_midrange_gap / n_midpoint_range['n']
+    n_midrange_gap_percent = n_midrange_gap / n_midpoint_range["n"]
 
     # Apply this proportion to the width of the midrange
-    n_midrange_gap_adjusted = (n_midpoint_range['max'] - n_midpoint_range['min']) * n_midrange_gap_percent
+    n_midrange_gap_adjusted = (
+        n_midpoint_range["max"] - n_midpoint_range["min"]
+    ) * n_midrange_gap_percent
 
     # Estimate the median
-    estimated_median = n_midpoint_range['min'] + n_midrange_gap_adjusted
+    estimated_median = n_midpoint_range["min"] + n_midrange_gap_adjusted
 
     # If there's no sampling percentage, we can't calculate a margin of error
     if not sampling_percentage:
@@ -160,11 +166,16 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
         return estimated_median, None
 
     # Get the standard error for this dataset
-    standard_error = (design_factor * math.sqrt(((100 - sampling_percentage) / (n * sampling_percentage)) * (50**2))) / 100
+    standard_error = (
+        design_factor
+        * math.sqrt(
+            ((100 - sampling_percentage) / (n * sampling_percentage)) * (50**2)
+        )
+    ) / 100
 
     # Use the standard error to calculate the p values
-    p_lower = .5 - standard_error
-    p_upper = .5 + standard_error
+    p_lower = 0.5 - standard_error
+    p_upper = 0.5 + standard_error
 
     # Estimate the p_lower and p_upper n values
     p_lower_n = n * p_lower
@@ -173,45 +184,55 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
     # Find the ranges the p values fall within
     try:
         p_lower_range_i, p_lower_range = next(
-            (i, d) for i, d in enumerate(range_list)
-            if p_lower_n >= d['n_min'] and p_lower_n <= d['n_max']
+            (i, d)
+            for i, d in enumerate(range_list)
+            if p_lower_n >= d["n_min"] and p_lower_n <= d["n_max"]
         )
     except StopIteration:
-        raise DataError(f"The n's lower p value {p_lower_n} does not fall within a data range.")
+        raise DataError(
+            f"The n's lower p value {p_lower_n} does not fall within a data range."
+        )
 
     try:
         p_upper_range_i, p_upper_range = next(
-            (i, d) for i, d in enumerate(range_list)
-            if p_upper_n >= d['n_min'] and p_upper_n <= d['n_max']
+            (i, d)
+            for i, d in enumerate(range_list)
+            if p_upper_n >= d["n_min"] and p_upper_n <= d["n_max"]
         )
     except StopIteration:
-        raise DataError(f"The n's upper p value {p_upper_n} does not fall within a data range.")
+        raise DataError(
+            f"The n's upper p value {p_upper_n} does not fall within a data range."
+        )
 
     # Use these values to estimate the lower bound of the confidence interval
-    p_lower_a1 = p_lower_range['min']
+    p_lower_a1 = p_lower_range["min"]
     try:
-        p_lower_a2 = range_list[p_lower_range_i + 1]['min']
+        p_lower_a2 = range_list[p_lower_range_i + 1]["min"]
     except IndexError:
-        p_lower_a2 = p_lower_range['max']
-    p_lower_c1 = p_lower_range['n_min'] / n
+        p_lower_a2 = p_lower_range["max"]
+    p_lower_c1 = p_lower_range["n_min"] / n
     try:
-        p_lower_c2 = range_list[p_lower_range_i + 1]['n_min'] / n
+        p_lower_c2 = range_list[p_lower_range_i + 1]["n_min"] / n
     except IndexError:
-        p_lower_c2 = p_lower_range['n_max'] / n
-    lower_bound = ((p_lower - p_lower_c1) / (p_lower_c2 - p_lower_c1)) * (p_lower_a2 - p_lower_a1) + p_lower_a1
+        p_lower_c2 = p_lower_range["n_max"] / n
+    lower_bound = ((p_lower - p_lower_c1) / (p_lower_c2 - p_lower_c1)) * (
+        p_lower_a2 - p_lower_a1
+    ) + p_lower_a1
 
     # Same for the upper bound
-    p_upper_a1 = p_upper_range['min']
+    p_upper_a1 = p_upper_range["min"]
     try:
-        p_upper_a2 = range_list[p_upper_range_i + 1]['min']
+        p_upper_a2 = range_list[p_upper_range_i + 1]["min"]
     except IndexError:
-        p_upper_a2 = p_upper_range['max']
-    p_upper_c1 = p_upper_range['n_min'] / n
+        p_upper_a2 = p_upper_range["max"]
+    p_upper_c1 = p_upper_range["n_min"] / n
     try:
-        p_upper_c2 = range_list[p_upper_range_i + 1]['n_min'] / n
+        p_upper_c2 = range_list[p_upper_range_i + 1]["n_min"] / n
     except IndexError:
-        p_upper_c2 = p_upper_range['n_max'] / n
-    upper_bound = ((p_upper - p_upper_c1) / (p_upper_c2 - p_upper_c1)) * (p_upper_a2 - p_upper_a1) + p_upper_a1
+        p_upper_c2 = p_upper_range["n_max"] / n
+    upper_bound = ((p_upper - p_upper_c1) / (p_upper_c2 - p_upper_c1)) * (
+        p_upper_a2 - p_upper_a1
+    ) + p_upper_a1
 
     # Calculate the standard error of the median
     standard_error_median = 0.5 * (upper_bound - lower_bound)
@@ -262,7 +283,9 @@ def approximate_proportion(numerator_pair, denominator_pair):
     proportion_estimate = numerator_estimate / denominator_estimate
 
     # Approximate the margin of error
-    squared_proportion_moe = numerator_moe**2 - (proportion_estimate**2 * denominator_moe**2)
+    squared_proportion_moe = numerator_moe**2 - (
+        proportion_estimate**2 * denominator_moe**2
+    )
     # Ensure it is greater than zero
     if squared_proportion_moe < 0:
         raise DataError(
@@ -306,7 +329,9 @@ def approximate_ratio(numerator_pair, denominator_pair):
     ratio_estimate = numerator_estimate / denominator_estimate
 
     # Approximate the margin of error
-    squared_ratio_moe = numerator_moe**2 + (ratio_estimate**2 * denominator_moe**2)
+    squared_ratio_moe = numerator_moe**2 + (
+        ratio_estimate**2 * denominator_moe**2
+    )
     ratio_moe = (1.0 / denominator_estimate) * math.sqrt(squared_ratio_moe)
 
     # Return the result
@@ -345,7 +370,9 @@ def approximate_product(pair_one, pair_two):
     product_estimate = estimate_one * estimate_two
 
     # Approximate the margin of error
-    squared_product_moe = (estimate_one**2 * moe_two**2) + (estimate_two**2 * moe_one**2)
+    squared_product_moe = (estimate_one**2 * moe_two**2) + (
+        estimate_two**2 * moe_one**2
+    )
     product_moe = math.sqrt(squared_product_moe)
 
     # Return the results
@@ -458,14 +485,16 @@ def approximate_mean(range_list, simulations=50, pareto=False):
         (60364.96525340687, 58.60735554621351)
     """
     # Sort the list
-    range_list.sort(key=lambda x: x['min'])
+    range_list.sort(key=lambda x: x["min"])
 
     if pareto:  # need shape parameter if using Pareto distribution
-        nb1 = range_list[-2]['n']  # number in second to last bin
-        nb = range_list[-1]['n']  # number in last bin
-        lb1 = range_list[-2]['min']  # lower bound of second to last bin
-        lb = range_list[-1]['min']  # lower bound of last bin
-        alpha_hat = (numpy.log(nb1 + nb) - numpy.log(nb)) / (numpy.log(lb) - numpy.log(lb1))  # shape parameter for Pareto
+        nb1 = range_list[-2]["n"]  # number in second to last bin
+        nb = range_list[-1]["n"]  # number in last bin
+        lb1 = range_list[-2]["min"]  # lower bound of second to last bin
+        lb = range_list[-1]["min"]  # lower bound of last bin
+        alpha_hat = (numpy.log(nb1 + nb) - numpy.log(nb)) / (
+            numpy.log(lb) - numpy.log(lb1)
+        )  # shape parameter for Pareto
 
     simulation_results = []
     for i in range(simulations):
@@ -473,33 +502,53 @@ def approximate_mean(range_list, simulations=50, pareto=False):
         simulated_n = []
         # loop through every bin except the last one
         for range_ in range_list[:-1]:
-            se = range_['moe'] / 1.645  # convert moe to se
-            nn = round(numpy.random.normal(range_['n'], se))  # use moe to introduce randomness into number in bin
+            se = range_["moe"] / 1.645  # convert moe to se
+            nn = round(
+                numpy.random.normal(range_["n"], se)
+            )  # use moe to introduce randomness into number in bin
             nn = int(nn)  # clean it up
-            simulated_values.append(numpy.random.uniform(range_['min'], range_['max'], size=(1, nn)).sum())  # draw random values within the bin, assume uniform
+            simulated_values.append(
+                numpy.random.uniform(range_["min"], range_["max"], size=(1, nn)).sum()
+            )  # draw random values within the bin, assume uniform
             simulated_n.append(nn)
         # a special case to handle the last bin
         if pareto:
             last = range_list[-1]
-            se = last['moe'] / 1.645  # convert moe to se
-            nn = round(numpy.random.normal(last['n'], se))  # use moe to introduce randomness into number in bin
+            se = last["moe"] / 1.645  # convert moe to se
+            nn = round(
+                numpy.random.normal(last["n"], se)
+            )  # use moe to introduce randomness into number in bin
             nn = int(nn)  # clean it up
-            simulated_values.append(numpy.random.pareto(a=alpha_hat, size=(1, nn)).sum())  # draw random values within the bin, assume uniform
+            simulated_values.append(
+                numpy.random.pareto(a=alpha_hat, size=(1, nn)).sum()
+            )  # draw random values within the bin, assume uniform
             simulated_n.append(nn)
         # use uniform otherwise
         else:
             last = range_list[-1]
-            se = last['moe'] / 1.645  # convert moe to se
-            nn = round(numpy.random.normal(last['n'], se))  # use moe to introduce randomness into number in bin
+            se = last["moe"] / 1.645  # convert moe to se
+            nn = round(
+                numpy.random.normal(last["n"], se)
+            )  # use moe to introduce randomness into number in bin
             nn = int(nn)  # clean it up
-            simulated_values.append(numpy.random.uniform(last['min'], last['max'], size=(1, nn)).sum())  # draw random values within the bin, assume uniform
+            simulated_values.append(
+                numpy.random.uniform(last["min"], last["max"], size=(1, nn)).sum()
+            )  # draw random values within the bin, assume uniform
             simulated_n.append(nn)
-        simulation_results.append(sum(simulated_values) / sum(simulated_n))  # calculate mean for replicate
+        simulation_results.append(
+            sum(simulated_values) / sum(simulated_n)
+        )  # calculate mean for replicate
 
     estimated_mean = numpy.mean(simulation_results)  # calculate overall mean
-    moe_right = numpy.quantile(simulation_results, 0.95) - estimated_mean  # go from confidence interval to margin of error
-    moe_left = estimated_mean - numpy.quantile(simulation_results, 0.05)  # go from confidence interval to margin of error
-    margin_of_error = max(moe_left, moe_right)   # if asymmetrical take bigger one, conservative
+    moe_right = (
+        numpy.quantile(simulation_results, 0.95) - estimated_mean
+    )  # go from confidence interval to margin of error
+    moe_left = estimated_mean - numpy.quantile(
+        simulation_results, 0.05
+    )  # go from confidence interval to margin of error
+    margin_of_error = max(
+        moe_left, moe_right
+    )  # if asymmetrical take bigger one, conservative
 
     # Return the result
     return estimated_mean, margin_of_error

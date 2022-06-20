@@ -21,7 +21,7 @@ Installation
 
 .. code-block:: bash
 
-   $ pipenv install census-data-aggregator
+   pipenv install census-data-aggregator
 
 
 Usage
@@ -31,7 +31,7 @@ Import the library.
 
 .. code-block:: python
 
-   >>> import census_data_aggregator
+   import census_data_aggregator
 
 
 Approximating sums
@@ -43,11 +43,10 @@ Accepts an open-ended set of paired lists, each expected to provide an estimate 
 
 .. code-block:: python
 
-  >>> males_under_5, males_under_5_moe = 10154024, 3778
-  >>> females_under_5, females_under_5_moe = 9712936, 3911
-  >>> census_data_aggregator.approximate_sum(
-      (males_under_5, males_under_5_moe),
-      (females_under_5, females_under_5_moe)
+  males_under_5, males_under_5_moe = 10154024, 3778
+  females_under_5, females_under_5_moe = 9712936, 3911
+  census_data_aggregator.approximate_sum(
+      (males_under_5, males_under_5_moe), (females_under_5, females_under_5_moe)
   )
   19866960, 5437.757350231803
 
@@ -77,7 +76,7 @@ Expects a list of dictionaries that divide the full range of data values into co
 
 .. code-block:: python
 
-    >>> income = [
+    income = [
         dict(min=0, max=9999, n=7942251, moe=17662),
         dict(min=10000, max=14999, n=5768114, moe=16409),
         dict(min=15000, max=19999, n=5727180, moe=16801),
@@ -93,9 +92,9 @@ Expects a list of dictionaries that divide the full range of data values into co
         dict(min=100000, max=124999, n=10273788, moe=47842),
         dict(min=125000, max=149999, n=6428069, moe=37952),
         dict(min=150000, max=199999, n=6931136, moe=37236),
-        dict(min=200000, max=1000000, n=7465517, moe=42206)
+        dict(min=200000, max=1000000, n=7465517, moe=42206),
     ]
-    >>> approximate_mean(income)
+    approximate_mean(income)
     (98045.44530685373, 194.54892406267754)
 
 Note that this function expects you to submit a lower bound for the smallest bin and an upper bound for the largest bin. This is often not available for ACS datasets like income. We recommend experimenting with different lower and upper bounds to assess its effect on the resulting mean.
@@ -104,25 +103,26 @@ By default the simulation is run 50 times, which can take as long as a minute. T
 
 .. code-block:: python
 
-     >>> approximate_mean(income, simulations=10)
+     approximate_mean(income, simulations=10)
 
 The simulation assumes a uniform distribution of values within each bin. In some cases, like income, it is common to assume the `Pareto distribution <https://en.wikipedia.org/wiki/Pareto_distribution>`_ in the highest bin. You can employ it here by passing `True` to the `pareto` keyword argument.
 
 .. code-block:: python
 
-     >>> approximate_mean(income, pareto=True)
+     approximate_mean(income, pareto=True)
      (60364.96525340687, 58.60735554621351)
 
 Also, due to the stochastic nature of the simulation approach, you will need to set a seed before running this function to ensure replicability.
 
 .. code-block:: python
 
-     >>> import numpy
-     >>> numpy.random.seed(711355)
-     >>> approximate_mean(income, pareto=True)
+     import numpy
+
+     numpy.random.seed(711355)
+     approximate_mean(income, pareto=True)
      (60364.96525340687, 58.60735554621351)
-     >>> numpy.random.seed(711355)
-     >>> approximate_mean(income, pareto=True)
+     numpy.random.seed(711355)
+     approximate_mean(income, pareto=True)
      (60364.96525340687, 58.60735554621351)
 
 
@@ -148,7 +148,7 @@ Expects a list of dictionaries that divide the full range of data values into co
 
 .. code-block:: python
 
-  >>> household_income_la_2013_acs1 = [
+  household_income_la_2013_acs1 = [
       dict(min=2499, max=9999, n=1382),
       dict(min=10000, max=14999, n=2377),
       dict(min=15000, max=19999, n=1332),
@@ -164,7 +164,7 @@ Expects a list of dictionaries that divide the full range of data values into co
       dict(min=100000, max=124999, n=5257),
       dict(min=125000, max=149999, n=3485),
       dict(min=150000, max=199999, n=2926),
-      dict(min=200000, max=250001, n=4215)
+      dict(min=200000, max=250001, n=4215),
   ]
 
 For a margin of error to be returned, a sampling percentage must be provided to calculate the standard error. The sampling percentage represents what proportion of the population that participated in the survey. Here are the values for some common census surveys.
@@ -185,15 +185,17 @@ For a margin of error to be returned, a sampling percentage must be provided to 
 
 .. code-block:: python
 
-    >>> census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs1, sampling_percentage=2.5)
+    census_data_aggregator.approximate_median(
+        household_income_Los_Angeles_County_2013_acs1, sampling_percentage=2.5
+    )
     70065.84266055046, 3850.680465234964
 
 If you do not provide the value to the function, no margin of error will be returned.
 
 .. code-block:: python
 
-  >>> census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs1)
-  70065.84266055046, None
+    census_data_aggregator.approximate_median(household_income_Los_Angeles_County_2013_acs1)
+    70065.84266055046, None
 
 If the data being approximated comes from PUMS, an additional design factor must also be provided. The design factor is a statistical input used to tailor the estimate to the variance of the dataset. Find the value for the dataset you are estimating by referring to `the bureau's reference material <https://www.census.gov/programs-surveys/acs/technical-documentation/pums/documentation.html>`_.
 
@@ -209,11 +211,10 @@ Returns both values as percentages multiplied by 100.
 
 .. code-block:: python
 
-    >>> single_women_in_fairfax_before = 135173, 3860
-    >>> single_women_in_fairfax_after = 139301, 4047
-    >>> census_data_aggregator.approximate_percentchange(
-      single_women_in_fairfax_before,
-      single_women_in_fairfax_after
+    single_women_in_fairfax_before = 135173, 3860
+    single_women_in_fairfax_after = 139301, 4047
+    census_data_aggregator.approximate_percentchange(
+        single_women_in_fairfax_before, single_women_in_fairfax_after
     )
     3.0538643072211165, 4.198069852261231
 
@@ -227,12 +228,9 @@ Accepts two paired lists, each expected to provide an estimate followed by its m
 
 .. code-block:: python
 
-   >>> owner_occupied_units = 74506512, 228238
-   >>> single_family_percent = 0.824, 0.001
-   >>> census_data_aggregator.approximate_product(
-       owner_occupied_units,
-       single_family_percent
-   )
+   owner_occupied_units = 74506512, 228238
+   single_family_percent = 0.824, 0.001
+   census_data_aggregator.approximate_product(owner_occupied_units, single_family_percent)
    61393366, 202289
 
 
@@ -245,13 +243,12 @@ Accepts two paired lists, each expected to provide an estimate followed by its m
 
 .. code-block:: python
 
-  >>> single_women_in_virginia = 203119, 5070
-  >>> total_women_in_virginia = 630498, 831
-  >>> census_data_aggregator.approximate_proportion(
-      single_women_in_virginia,
-      total_women_in_virginia
-  )
-  0.322, 0.008
+    single_women_in_virginia = 203119, 5070
+    total_women_in_virginia = 630498, 831
+    census_data_aggregator.approximate_proportion(
+        single_women_in_virginia, total_women_in_virginia
+    )
+    0.322, 0.008
 
 
 Approximating ratios
@@ -263,13 +260,12 @@ Accepts two paired lists, each expected to provide an estimate followed by its m
 
 .. code-block:: python
 
-  >>> single_men_in_virginia = 226840, 5556
-  >>> single_women_in_virginia = 203119, 5070
-  >>> census_data_aggregator.approximate_ratio(
-      single_men_in_virginia,
-      single_women_in_virginia
-  )
-  1.117, 0.039
+    single_men_in_virginia = (226840, 5556)
+    single_women_in_virginia = (203119, 5070)
+    census_data_aggregator.approximate_ratio(
+        single_men_in_virginia, single_women_in_virginia
+    )
+    1.117, 0.039
 
 
 A note from the experts

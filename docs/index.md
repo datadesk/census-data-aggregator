@@ -10,16 +10,6 @@ Combine U.S. census data responsibly
 :depth: 2
 ```
 
-## Features
-
-- Approximating sums
-- Approximating means
-- Approximating medians
-- Approximating percent change
-- Approximating products
-- Approximating proportions
-- Approximating ratios
-
 ## Installation
 
 ```bash

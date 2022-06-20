@@ -8,6 +8,8 @@ twine = "*"
 flake8 = "*"
 setuptools-scm = "*"
 pre-commit = "*"
+sphinx = "*"
+myst-parser = "*"
 
 [packages]
 numpy = "*"

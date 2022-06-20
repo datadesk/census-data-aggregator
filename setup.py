@@ -8,9 +8,39 @@ def read(fname):
         return f.read()
 
 
+def version_scheme(version):
+    """
+    Version scheme hack for setuptools_scm.
+
+    Appears to be necessary to due to the bug documented here: https://github.com/pypa/setuptools_scm/issues/342
+
+    If that issue is resolved, this method can be removed.
+    """
+    import time
+
+    from setuptools_scm.version import guess_next_version
+
+    if version.exact:
+        return version.format_with("{tag}")
+    else:
+        _super_value = version.format_next_version(guess_next_version)
+        now = int(time.time())
+        return _super_value + str(now)
+
+
+def local_version(version):
+    """
+    Local version scheme hack for setuptools_scm.
+
+    Appears to be necessary to due to the bug documented here: https://github.com/pypa/setuptools_scm/issues/342
+
+    If that issue is resolved, this method can be removed.
+    """
+    return ""
+
+
 setup(
     name="census-data-aggregator",
-    version="0.0.6",
     description="Combine U.S. census data responsibly",
     long_description=read("README.rst"),
     author="Ben Welsh",
@@ -21,6 +51,7 @@ setup(
     install_requires=[
         "numpy",
     ],
+    use_scm_version={"version_scheme": version_scheme, "local_scheme": local_version},
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",

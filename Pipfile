@@ -6,10 +6,11 @@ verify_ssl = true
 [dev-packages]
 twine = "*"
 flake8 = "*"
-coverage = "*"
+setuptools-scm = "*"
+pre-commit = "*"
 
 [packages]
-numpy = ">=1.14.0"
+numpy = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.9"

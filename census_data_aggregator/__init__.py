@@ -1,6 +1,3 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-from __future__ import division
 import math
 import numpy
 import warnings
@@ -8,8 +5,7 @@ from .exceptions import DataError, SamplingPercentageWarning
 
 
 def approximate_sum(*pairs):
-    """
-    Sum estimates from the U.S. Census Bureau and approximate the combined margin of error.
+    """Sum estimates from the U.S. Census Bureau and approximate the combined margin of error.
 
     Follows the U.S. Census Bureau's `official guidelines`_ for how to calculate a new margin of error
     when totaling multiple values. Useful for aggregating census categories and geographies.
@@ -62,8 +58,7 @@ def approximate_sum(*pairs):
 
 
 def approximate_median(range_list, design_factor=1, sampling_percentage=None):
-    """
-    Estimate a median and approximate the margin of error.
+    """Estimate a median and approximate the margin of error.
 
     Follows the U.S. Census Bureau's `official guidelines`_ for estimation using a design factor.
     Useful for generating medians for measures like household income and age when aggregating census geographies.
@@ -229,8 +224,7 @@ def approximate_median(range_list, design_factor=1, sampling_percentage=None):
 
 
 def approximate_proportion(numerator_pair, denominator_pair):
-    """
-    Calculate an estimate's proportion of another estimate and approximate the margin of error.
+    """Calculate an estimate's proportion of another estimate and approximate the margin of error.
 
     Follows the U.S. Census Bureau's `official guidelines`_.
 
@@ -281,8 +275,7 @@ def approximate_proportion(numerator_pair, denominator_pair):
 
 
 def approximate_ratio(numerator_pair, denominator_pair):
-    """
-    Calculate the ratio between two estimates and approximate its margin of error.
+    """Calculate the ratio between two estimates and approximate its margin of error.
 
     Follows the U.S. Census Bureau's `official guidelines`_.
 
@@ -321,8 +314,7 @@ def approximate_ratio(numerator_pair, denominator_pair):
 
 
 def approximate_product(pair_one, pair_two):
-    """
-    Calculates the product of two estimates and approximates its margin of error.
+    """Calculates the product of two estimates and approximates its margin of error.
 
     Follows the U.S. Census Bureau's `official guidelines`_.
 
@@ -361,8 +353,7 @@ def approximate_product(pair_one, pair_two):
 
 
 def approximate_percentchange(pair_old, pair_new):
-    """
-    Calculates the percent change between two estimates and approximates its margin of error.
+    """Calculates the percent change between two estimates and approximates its margin of error.
 
     Multiplies results by 100.
 
@@ -409,8 +400,7 @@ def approximate_percentchange(pair_old, pair_new):
 
 
 def approximate_mean(range_list, simulations=50, pareto=False):
-    """
-    Estimate a mean and approximate the margin of error.
+    """Estimate a mean and approximate the margin of error.
 
     The Census Bureau guidelines do not provide instructions for
     approximating a mean using data from the ACS.

@@ -11,17 +11,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install pipenv
-        run: pipx install pipenv
-
-      - uses: actions/setup-python@v3
+      - id: setup-python
+        name: Setup Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           cache: 'pipenv'
 
-      - id: pipenv-install
+      - id: install-pipenv
+        name: Install pipenv
+        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
+        shell: bash
+
+      - id: install-python-dependencies
         name: Install Python dependencies
-        run: pipenv install --dev --python `which python`
+        run: pipenv install --dev --python=`which python`
+        shell: bash
 
       - id: run
         name: Run
@@ -37,17 +42,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install pipenv
-        run: pipx install pipenv
-
-      - uses: actions/setup-python@v3
+      - id: setup-python
+        name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python }}
+          python-version: '3.9'
           cache: 'pipenv'
 
-      - id: pipenv-install
+      - id: install-pipenv
+        name: Install pipenv
+        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
+        shell: bash
+
+      - id: install-python-dependencies
         name: Install Python dependencies
-        run: pipenv install --skip-lock --python `which python`
+        run: pipenv install --dev --python=`which python`
         shell: bash
 
       - id: run
@@ -63,17 +72,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install pipenv
-        run: pipx install pipenv
-
-      - uses: actions/setup-python@v3
+      - id: setup-python
+        name: Setup Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           cache: 'pipenv'
 
-      - id: pipenv-install
+      - id: install-pipenv
+        name: Install pipenv
+        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
+        shell: bash
+
+      - id: install-python-dependencies
         name: Install Python dependencies
-        run: pipenv install --dev --python `which python`
+        run: pipenv install --dev --python=`which python`
+        shell: bash
 
       - id: build
         name: Build release

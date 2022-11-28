@@ -39,21 +39,12 @@ The Census Bureau guidelines do not provide instructions for approximating a mea
 
 Expects a list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have four keys:
 
-```{eval-rst}
-.. list-table::
-  :header-rows: 1
-
-  * - key
-    - value
-  * - min
-    - The minimum value of the range
-  * - max
-    - The maximum value of the range
-  * - n
-    - The number of people, households or other units in the range
-  * - moe
-    - The margin of error for the number of units in the range
-```
+key|value
+---|-----
+min|The minimum value of the range
+max|The maximum value of the range
+n|The number of people, households or other units in the range
+moe|The margin of error for the number of units in the range
 
 ```python
 income = [
@@ -112,20 +103,11 @@ Estimate a median and approximate the margin of error. Follows the U.S. Census B
 
 Expects a list of dictionaries that divide the full range of data values into continuous categories. Each dictionary should have three keys:
 
-```{eval-rst}
-.. list-table::
-  :header-rows: 1
-
-  * - key
-    - value
-  * - min
-    - The minimum value of the range
-  * - max
-    - The maximum value of the range
-  * - n
-    - The number of people, households or other units in the range
-
-```
+key|value
+---|-----
+min|The minimum value of the range
+max|The maximum value of the range
+n|The number of people, households or other units in the range
 
 ```python
 household_income_la_2013_acs1 = [
@@ -150,21 +132,12 @@ household_income_la_2013_acs1 = [
 
 For a margin of error to be returned, a sampling percentage must be provided to calculate the standard error. The sampling percentage represents what proportion of the population that participated in the survey. Here are the values for some common census surveys.
 
-```{eval-rst}
-.. list-table::
-  :header-rows: 1
-
-  * - survey
-    - samping percentage
-  * - One-year PUMS
-    - 1
-  * - One-year ACS
-    - 2.5
-  * - Three-year ACS
-    - 7.5
-  * - Five-year ACS
-    - 12.5
-```
+survey|sampling percentage
+------|-------------------
+One-year PUMS|1
+One-year ACS|2.5
+Three-year ACS|7.5
+Five-year ACS|12.5
 
 ```python
 census_data_aggregator.approximate_median(

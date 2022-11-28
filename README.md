@@ -219,13 +219,9 @@ census_data_aggregator.approximate_ratio(
 
 The California State Data Center's Demographic Research Unit [notes](https://www.documentcloud.org/documents/6165014-How-to-Recalculate-a-Median.html#document/p4/a508562):
 
-%
-
 > The user should be aware that the formulas are actually approximations that overstate the MOE compared to the more precise methods based on the actual survey returns that the Census Bureau uses. Therefore, the calculated MOEs will be higher, or more conservative, than those found in published tabulations for similarly-sized areas. This knowledge may affect the level of error you are willing to accept.
 
 The American Community Survey's handbook [adds](https://www.documentcloud.org/documents/6177941-Acs-General-Handbook-2018-ch08.html#document/p3/a509993):
-
-%
 
 > As the number of estimates involved in a sum or difference increases, the results of the approximation formula become increasingly different from the \[standard error\] derived directly from the ACS microdata. Users are encouraged to work with the fewest number of estimates possible.
 
